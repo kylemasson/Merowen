@@ -4,7 +4,7 @@ import { CoordLine } from "@/components/CoordLine";
 import { FindYourHour } from "@/components/FindYourHour";
 import { HeroMedia } from "@/components/HeroMedia";
 import { InnerCircleForm } from "@/components/InnerCircleForm";
-import { RANGE, careItem, media, posting } from "@/lib/catalog";
+import { HERO_FILM, RANGE, careItem, media, posting } from "@/lib/catalog";
 
 const PROOFS = [
   { k: "Natural-origin index", v: "Calculated to ISO 16128 and printed on every label." },
@@ -23,6 +23,7 @@ export default function HomePage() {
         <HeroMedia
           still={media("merowen_brand_hero_v05.jpg")}
           stillMobile={media("merowen_hero_mobile_v05.jpg")}
+          film={HERO_FILM}
           alt="Mirbat on wet basalt at night"
         />
         <div className="hero__inner">

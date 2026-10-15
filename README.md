@@ -44,7 +44,8 @@ sign-ups are not open yet.
 - `app/`: routes (`/`, `/range`, `/field-care`, `/products/[handle]`, `/about`, `/refill-programme`, `/cart`) and server actions in `app/actions.ts`.
 - `components/`: header, bag drawer, hero, Find your hour, product media and buy block.
 - `lib/catalog.ts`: all copy and imagery. `lib/shopify.ts`, `lib/offers.ts`, `lib/bag.ts`: Shopify and the bag.
-- `public/media/`: the v05 photography from the kit. The films in the kit are HEVC and are not shipped; stills stand in until web-encoded films are uploaded to Shopify.
+- `public/media/`: the v05 photography from the kit.
+- `public/film-files/` (served with Range support by `app/films/[name]/route.ts`): the kit's v05 films re-encoded for the web (H.264, fast start, silent) with macOS `avconvert -p Preset1920x1080`. They play on the home hero (desktop) and the four posting pages. Phones get the portrait still until a v05 mobile hero film exists. A `merowen.film` set in Shopify overrides a posting's film.
 - `app/globals.css`: every colour, type size and layout rule.
 
 ## Deploy

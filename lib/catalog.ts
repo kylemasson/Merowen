@@ -20,6 +20,8 @@ export type Posting = {
   source: string;
   producer: string;
   image: string;
+  /** Silent H.264 loop, web-encoded from the kit's v05 film. */
+  film: string;
   extras: string[];
 };
 
@@ -55,6 +57,9 @@ export type CareItem = {
 };
 
 export const media = (file: string) => `/media/${file}`;
+export const film = (file: string) => `/films/${file}`;
+
+export const HERO_FILM = film("merowen_hero_film_desktop_v05_web.mp4");
 
 export const SIZES = [
   { label: "50 ml", price: 195 },
@@ -79,6 +84,7 @@ export const POSTINGS: Posting[] = [
     source: "Boswellia sacra resin, hand-tapped in the Dhofar hills, Oman. Distilled in Salalah.",
     producer: "[Co-operative / distiller TBC]",
     image: media("merowen_master_mirbat_v05.jpg"),
+    film: film("merowen_film_mirbat_v05_web.mp4"),
     extras: [],
   },
   {
@@ -98,6 +104,7 @@ export const POSTINGS: Posting[] = [
     source: "Cedrus atlantica heartwood from managed forest in the Middle Atlas, Morocco. Steam-distilled near Azrou.",
     producer: "[Distiller TBC]",
     image: media("merowen_master_azrou_v05.jpg"),
+    film: film("merowen_film_azrou_v05_web.mp4"),
     extras: [],
   },
   {
@@ -117,6 +124,7 @@ export const POSTINGS: Posting[] = [
     source: "Vetiveria zizanioides roots, 18-month harvest, Les Cayes plain, Sud, Haiti.",
     producer: "[Grower co-operative TBC]",
     image: media("merowen_master_torbeck_v05.jpg"),
+    film: film("merowen_film_torbeck_v05_web.mp4"),
     extras: [],
   },
   {
@@ -136,6 +144,7 @@ export const POSTINGS: Posting[] = [
     source: "Fucus vesiculosus seaweed absolute from the Atlantic coast of Scotland, plus wild heather.",
     producer: "[Supplier TBC]",
     image: media("merowen_master_kilda_v05.jpg"),
+    film: film("merowen_film_kilda_v05_web.mp4"),
     extras: [],
   },
 ];

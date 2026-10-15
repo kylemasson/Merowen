@@ -75,7 +75,7 @@ export default async function ProductPage({ params }: Props) {
       <main className="pdp">
         <div className="wrap stack stack--pdp">
           <div className="pdp__grid">
-            <ProductMedia name={`${p.name} flacon`} images={images} film={offer.film} ratio="45" />
+            <ProductMedia name={`${p.name} flacon`} images={images} film={offer.film ?? p.film} ratio="45" />
             <div className="pdp__info">
               <Link href="/range" className="crumb">
                 ← THE POSTINGS
