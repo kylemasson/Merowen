@@ -47,7 +47,7 @@ export default async function ProductPage({ params }: Props) {
   if (!offer) notFound();
 
   if (p) {
-    const images = [p.image, ...p.extras, media("merowen_pack_box_v05.jpg")];
+    const images = [p.image, ...p.extras, media(`merowen_box_${p.handle}_v05.jpg`)];
     const layers = CARE.filter((x) => x.scent === p.handle);
     const specs: Spec[] = [
       { k: "Hero material", v: p.material },
