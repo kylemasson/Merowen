@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "merowen",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "merowen" }],
+  "observability": { "enabled": true },
+  "vars": {
+    "SHOPIFY_STORE_DOMAIN": "1qm0p7-qw.myshopify.com",
+    "SHOPIFY_API_VERSION": "2026-07",
+    "SHOPIFY_POSTINGS_COLLECTION": "postings",
+    "SITE_URL": "https://merowen.com"
+  },
+  // Branch previews (Workers Builds): public, non-secret values only.
+  "previews": {
+    "vars": {
+      "SHOPIFY_STORE_DOMAIN": "1qm0p7-qw.myshopify.com",
+      "SHOPIFY_API_VERSION": "2026-07",
+      "SHOPIFY_POSTINGS_COLLECTION": "postings",
+      "SITE_URL": "https://merowen.kyleamasson.workers.dev"
+    }
+  }
+  // Secrets (npx wrangler secret put …): SHOPIFY_STOREFRONT_ACCESS_TOKEN, NEWSLETTER_WEBHOOK_URL
+}

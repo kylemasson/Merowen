@@ -1,0 +1,13 @@
+node_modules
+.next
+.open-next
+.wrangler
+out
+.env*.local
+.dev.vars
+*.tsbuildinfo
+next-env.d.ts
+cloudflare-env.d.ts
+.DS_Store
+.claude
+design_handoff_merowen_storefront/design/films/
