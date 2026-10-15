@@ -66,7 +66,7 @@ export default function AboutPage() {
       <section className="section" id="packaging" aria-labelledby="packaging-title">
         <div className="wrap split">
           <div className="frame frame--11">
-            <img src={media("merowen_pack_box_v05.jpg")} alt="The presentation box" loading="lazy" decoding="async" />
+            <img src={media("merowen_box_mirbat_v05.jpg")} alt="The Mirbat flacon in its presentation box" loading="lazy" decoding="async" />
           </div>
           <div className="stack stack--28">
             <div className="eyebrow">Packaging</div>

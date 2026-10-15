@@ -102,7 +102,7 @@ Section order in v4: Hero → Postings (with Find your hour) → The Range → F
   - Below 760px: one column.
 - **Posting media.** A 4:5 frame.
   - If `merowen.film` is set, motion is allowed and the visitor hasn't paused it, play the film: muted, looped, inline, with `poster` set to the still. A Pause/Play control sits bottom-right.
-  - Otherwise show the image gallery: posting still, then the extras, then `merowen_pack_box`.
+  - Otherwise show the image gallery: posting still, then the extras, then that posting's own box shot `assets.boxes[handle]` (`merowen_box_{handle}_v05`). Never reuse the Mirbat box on another posting's page.
 - **Posting copy.** Use the brand-book stories, which `fallback.ts` already has.
   - Sizes: `50 ml $195` and `100 ml $285`. The prices come from Shopify variants; these values are for demo mode only.
   - Note under the button: `Began with the Dossier? Enter the code from its card in the bag.`
@@ -132,7 +132,7 @@ Section order in v4: Hero → Postings (with Find your hour) → The Range → F
 Heading `Discover. Wear. Carry. Keep.`, then the same four cards as on home, at full width.
 
 ### `/about` (new route)
-The name story and the pillars from the design file, plus a **Packaging** section: the `merowen_pack_box` image (1:1) next to `Made <em>to be kept.</em>` and a list of four rows:
+The name story and the pillars from the design file, plus a **Packaging** section: the `merowen_box_mirbat_v05` image (1:1) next to `Made <em>to be kept.</em>` and a list of four rows:
 - **Flacon:** Heavy-base glass; solid blackened-steel cap in satin gunmetal, knurled like a dive-watch crown, over a slim steel neck collar engraved with posting, hour, batch and date.
 - **Outer box:** Uncoated black FSC board, blind-debossed seal, coordinate line printed in bone ink, magnetic close. No foil, no plastic insert.
 - **Field Care:** Obsidian glass or black aluminium, blackened-steel caps and pumps, refillable steel deodorant case.
