@@ -1,129 +1,101 @@
 import Link from "next/link";
-import type { Product } from "@/lib/types";
-import type { RangeItem } from "@/lib/fallback";
-import { libraryImage } from "@/lib/fallback";
-import { scentColor, type CareProduct } from "@/lib/fieldcare";
-import { shopifyImage } from "@/lib/assets";
+import type { CareItem, Posting, RangeItem } from "@/lib/catalog";
+import { SIZES, hh, money, posting as postingBy } from "@/lib/catalog";
 
-/** "FROM $195 · 50 ML" from the first variant. */
-export function fromPrice(p: Product): string | null {
-  const v = p.variants[0];
-  if (!v?.price) return null;
-  return `From ${v.price}${v.title ? ` · ${v.title}` : ""}`;
-}
-
-export function PostingCard({
-  p,
-  lit = false,
-  showPrice = true,
-  small = false,
-  onHover,
-}: {
-  p: Product;
+type PostingCardProps = {
+  posting: Posting;
   lit?: boolean;
+  size?: "lg" | "md";
   showPrice?: boolean;
-  small?: boolean;
-  onHover?: (handle: string | null) => void;
-}) {
-  const m = p.posting!;
-  const price = showPrice ? fromPrice(p) : null;
+  onEnter?: () => void;
+  onLeave?: () => void;
+};
+
+export function PostingCard({ posting: p, lit, size = "lg", showPrice = true, onEnter, onLeave }: PostingCardProps) {
   return (
     <Link
       href={`/products/${p.handle}`}
       className={lit ? "card is-lit" : "card"}
-      onMouseEnter={onHover ? () => onHover(p.handle) : undefined}
-      onMouseLeave={onHover ? () => onHover(null) : undefined}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      onFocus={onEnter}
+      onBlur={onLeave}
     >
-      <div className="frame ratio-45 card__media">
-        {p.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={p.image} alt={p.imageAlt || `${p.title} flacon`} loading="lazy" decoding="async" />
-        ) : null}
+      <div className="frame frame--45">
+        <img src={p.image} alt={`${p.name} flacon`} loading="lazy" decoding="async" />
       </div>
-      <div className="card__text">
+      <div className="card__body">
         <div className="card__meta">
           <span>
-            {m.number} · {m.hour}
+            {p.num} · {hh(p.hour)}
           </span>
-          <span className="swatch" style={{ background: m.liquid }} aria-hidden="true" />
+          <span className="swatch" style={{ background: p.liquid }} aria-hidden="true" />
         </div>
-        <h3 className={small ? "card__name card__name--28" : "card__name"}>{p.title}</h3>
-        <p className="card__line">{m.line}</p>
-        {price ? <p className="card__price">{price}</p> : null}
+        <div className={size === "lg" ? "card__name" : "card__name card__name--28"}>{p.name}</div>
+        <div className="card__line">{p.line}</div>
+        {showPrice && <div className="card__price">FROM {money(SIZES[0].price)} · 50 ML</div>}
       </div>
     </Link>
   );
 }
 
-export function RangeCard({ r }: { r: RangeItem }) {
-  const img = libraryImage(r.handle);
+export function RangeCard({ item, tag }: { item: RangeItem; tag: "role" | "format" }) {
   return (
-    <Link href={`/products/${r.handle}`} className="card">
-      <div className="frame ratio-11 card__media">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {img ? <img src={img} alt={r.title} loading="lazy" decoding="async" /> : null}
-        {r.preparing ? <span className="tag">In preparation</span> : null}
+    <Link href={`/products/${item.handle}`} className="card">
+      <div className="frame frame--11">
+        <img src={item.image} alt={item.name} loading="lazy" decoding="async" />
+        {item.preparing && <span className="badge">In preparation</span>}
       </div>
-      <div className="card__text">
-        <p className="card__meta">
-          {r.role} · {r.format}
-        </p>
-        <h3 className="card__name card__name--28">{r.title}</h3>
-        <p className="card__line">{r.body}</p>
-        <p className="card__price">{r.price}</p>
+      <div className="card__body">
+        <div className="card__meta">{tag === "role" ? `${item.role} · ${item.format}` : item.format}</div>
+        <div className="card__name card__name--28">{item.name}</div>
+        <div className="card__line">{tag === "role" ? item.desc : item.line}</div>
+        <div className="card__price">{money(item.price)}</div>
       </div>
     </Link>
   );
 }
 
-export function CareCard({ p, mini = false }: { p: CareProduct; mini?: boolean }) {
+export function CareCard({ item, compact = false }: { item: CareItem; compact?: boolean }) {
+  const scent = postingBy(item.scent)!;
   return (
-    <Link href={`/products/${p.handle}`} className={mini ? "card card--mini" : "card card--care"}>
-      <div className="frame ratio-45 card__media">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={shopifyImage(p.image, 800)} alt={`${p.title}, ${p.size}`} loading="lazy" decoding="async" />
+    <Link href={`/products/${item.handle}`} className="card card--care">
+      <div className="frame frame--45">
+        <img src={item.image} alt={item.name} loading="lazy" decoding="async" />
       </div>
-      {mini ? (
-        <>
-          <p className="card__meta">{p.code}</p>
-          <h3 className="card__name card__name--24">{p.title}</h3>
-          <p className="card__price">
-            {p.size} — {p.price}
-          </p>
-        </>
-      ) : (
-        <div className="card__text">
-          <div className="card__meta">
-            <span>{p.code}</span>
-            <span className="scent-tag">
-              {p.scent}
-              <span className="swatch swatch--8" style={{ background: scentColor[p.scent] }} aria-hidden="true" />
+      <div className="card__body">
+        <div className="card__meta">
+          <span>{item.code}</span>
+          {!compact && (
+            <span className="scent">
+              {scent.name.toUpperCase()}
+              <span className="swatch swatch--8" style={{ background: scent.liquid }} aria-hidden="true" />
             </span>
-          </div>
-          <h3 className="card__name card__name--26">{p.title}</h3>
-          <p className="card__line">{p.line}</p>
-          <p className="card__price">
-            {p.size} — {p.price}
-          </p>
+          )}
         </div>
-      )}
+        <div className={compact ? "card__name card__name--24" : "card__name card__name--26"}>{item.name}</div>
+        {!compact && <div className="card__line">{item.line}</div>}
+        <div className="card__price">
+          {item.size.toUpperCase()} — {money(item.formats?.[0].price ?? item.price)}
+        </div>
+      </div>
     </Link>
   );
 }
 
-/** Home teaser: image plus `FC/0n · NAME` with a scent square. */
-export function CareTile({ p }: { p: CareProduct }) {
+/** The home teaser: image with a one-line caption, `FC/0n · NAME` and a scent swatch. */
+export function CareTeaserCard({ item }: { item: CareItem }) {
+  const scent = postingBy(item.scent)!;
   return (
-    <Link href={`/products/${p.handle}`} className="card card--mini">
-      <div className="frame ratio-45 card__media">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={shopifyImage(p.image, 800)} alt={p.title} loading="lazy" decoding="async" />
+    <Link href={`/products/${item.handle}`} className="card card--teaser">
+      <div className="frame frame--45">
+        <img src={item.image} alt={item.name} loading="lazy" decoding="async" />
       </div>
-      <div className="card__caption">
+      <div className="card__meta card__meta--stone">
         <span>
-          {p.code} · {p.title}
+          {item.code} · {item.name}
         </span>
-        <span className="swatch swatch--8" style={{ background: scentColor[p.scent] }} aria-hidden="true" />
+        <span className="swatch swatch--8" style={{ background: scent.liquid }} aria-hidden="true" />
       </div>
     </Link>
   );

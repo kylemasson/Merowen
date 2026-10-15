@@ -1,81 +1,280 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Bottle } from "@/components/Bottle";
 import { CareCard, PostingCard } from "@/components/Cards";
-import { CoordLine, postingLeft, postingRight } from "@/components/CoordLine";
-import { ProductBuy, type BuyOption } from "@/components/ProductBuy";
+import { CoordLine } from "@/components/CoordLine";
+import { ProductBuy } from "@/components/ProductBuy";
 import { ProductMedia } from "@/components/ProductMedia";
-import { assets, shopifyImage } from "@/lib/assets";
-import { fallbackPostings, getRangeItem, libraryImage } from "@/lib/fallback";
-import { careLine, getCareProduct, scentColor, scentNumber } from "@/lib/fieldcare";
-import { getPostings, getProduct } from "@/lib/shopify";
-import type { Product, Variant } from "@/lib/types";
-
-export const dynamic = "force-dynamic";
+import {
+  BOX_COPY,
+  CARE,
+  FLACON_COPY,
+  POSTINGS,
+  SHIPPING_COPY,
+  careItem,
+  media,
+  money,
+  posting,
+  rangeItem,
+} from "@/lib/catalog";
+import { getOffer } from "@/lib/offers";
 
 type Props = { params: Promise<{ handle: string }> };
 
-const SHIPPING = "[Shipping and returns policy, pulled from Shopify]";
+type Spec = { k: string; v: string; swatch?: string; mono?: boolean };
+type Detail = { title: string; body: string };
 
-const FLACON =
-  "Extra-clear flint glass with chamfered edges, cut like a gemstone; the lower third is opaque matte black glass fading up into clear, over a solid base. A tall solid blackened-steel cap in satin gunmetal, knurled like a dive-watch crown, its domed top engraved with the M seal, sits over a slim steel neck collar engraved with posting, hour, batch and date. No paper label: the name is printed on the glass in raised bone ink and the coordinates are etched into the base.";
-
-const BOX =
-  "Uncoated black FSC board, blind-debossed seal, coordinate line printed in bone ink, magnetic close. No foil, no plastic insert.";
+const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = await params;
-  const care = getCareProduct(handle);
-  if (care) return { title: `${care.title} — Field Care`, description: `${care.line} ${care.description}` };
-  const range = getRangeItem(handle);
-  const product = await getProduct(handle);
-  if (!product && range) return { title: range.title, description: `${range.line} ${range.body}` };
-  if (!product) return { title: "Not found" };
-  const p = product.posting;
-  return {
-    title: p ? `${product.title} — Posting ${p.number}` : product.title,
-    description: p ? `${p.line} ${p.heroMaterial}. ${product.description}` : product.description,
-    openGraph: product.image ? { images: [product.image] } : undefined,
-  };
+  const p = posting(handle);
+  const r = rangeItem(handle);
+  const c = careItem(handle);
+  const item = p ?? r ?? c;
+  if (!item) return { title: "Not found" };
+  const description = p?.desc ?? r?.desc ?? c?.note;
+  return { title: item.name, description, openGraph: { images: [p?.image ?? r?.image ?? c?.image ?? ""] } };
 }
 
-/** Turns Shopify variants (or planned options on demo data) into buy options. */
-function buyOptions(
-  variants: Variant[],
-  fallback: { labels?: string[]; subs?: string[]; price: string | null },
-  barSub: (label: string) => string,
-): BuyOption[] {
-  if (variants.length) {
-    return variants.map((v) => ({
-      label: v.title,
-      sub: variants.length > 1 ? v.price : null,
-      variantId: v.id,
-      available: v.available,
-      price: v.price ?? fallback.price,
-      barSub: barSub(v.title),
-    }));
+export default async function ProductPage({ params }: Props) {
+  const { handle } = await params;
+  const p = posting(handle);
+  const r = rangeItem(handle);
+  const c = careItem(handle);
+  if (!p && !r && !c) notFound();
+  const offer = await getOffer(handle);
+  if (!offer) notFound();
+
+  if (p) {
+    const images = [p.image, ...p.extras, media("merowen_pack_box_v05.jpg")];
+    const layers = CARE.filter((x) => x.scent === p.handle);
+    const specs: Spec[] = [
+      { k: "Hero material", v: p.material },
+      { k: "Family", v: p.family },
+      { k: "Top", v: p.top },
+      { k: "Heart", v: p.heart },
+      { k: "Base", v: p.base },
+      { k: "Liquid", v: p.liquid.toUpperCase(), swatch: p.liquid, mono: true },
+    ];
+    const details: Detail[] = [
+      { title: "The flacon", body: FLACON_COPY },
+      { title: "The box", body: BOX_COPY },
+      { title: "Ingredients and natural-origin index", body: "[Final INCI list and ISO 16128 natural-origin figure from the formulator]" },
+      { title: "Shipping and returns", body: SHIPPING_COPY },
+    ];
+    const provenance: Spec[] = [
+      { k: "Perfumer", v: "[Perfumer name], working with Merowen in Park City" },
+      { k: "Source", v: p.source },
+      { k: "Producer", v: p.producer },
+      { k: "Composed", v: "Park City, Utah" },
+      { k: "Bottled", v: "[Bottling partner, city TBC]" },
+      { k: "Concentration", v: "Eau de Parfum, 20% · 50 ml and 100 ml" },
+    ];
+    return (
+      <main className="pdp">
+        <div className="wrap stack stack--pdp">
+          <div className="pdp__grid">
+            <ProductMedia name={`${p.name} flacon`} images={images} film={offer.film} ratio="45" />
+            <div className="pdp__info">
+              <Link href="/range" className="crumb">
+                ← THE POSTINGS
+              </Link>
+              <Title eyebrow={`Posting ${p.num} · Eau de Parfum`} name={p.name} line={p.line} />
+              <CoordLine posting={p} animate />
+              <p className="lede">{p.desc}</p>
+              <ProductBuy
+                name={p.name}
+                optionLabel={offer.optionLabel}
+                options={offer.options}
+                preparing={false}
+                note="Began with the Dossier? Enter the code from its card in the bag."
+                barSubs={offer.options.map((o) => `EDP · ${o.label}`.toUpperCase())}
+              />
+              <Specs specs={specs} />
+              <Details details={details} />
+              <section className="prov" aria-labelledby="prov-title">
+                <div className="prov__head">
+                  <h2 className="eyebrow" id="prov-title">
+                    Provenance
+                  </h2>
+                  <span className="mono mono--pewter">BATCH 01 · 2026 · {p.coords}</span>
+                </div>
+                <Specs specs={provenance.filter((s) => s.v)} prov />
+              </section>
+            </div>
+          </div>
+
+          {layers.length > 0 && (
+            <section className="stack stack--32" aria-labelledby="layers-title">
+              <div className="rule-head">
+                <h2 className="h3" id="layers-title">
+                  Layers with {titleCase(p.name)}
+                </h2>
+                <span className="mono mono--ash">FIELD CARE</span>
+              </div>
+              <div className="cards cards--tight">
+                {layers.map((x) => (
+                  <CareCard key={x.handle} item={x} compact />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section className="stack stack--32" aria-labelledby="others-title">
+            <div className="rule-head">
+              <h2 className="h3" id="others-title">
+                The other postings
+              </h2>
+            </div>
+            <div className="cards cards--tight">
+              {POSTINGS.filter((x) => x.handle !== p.handle).map((x) => (
+                <PostingCard key={x.handle} posting={x} size="md" showPrice={false} />
+              ))}
+            </div>
+          </section>
+        </div>
+      </main>
+    );
   }
-  const labels = fallback.labels?.length ? fallback.labels : [""];
-  return labels.map((label, i) => ({
-    label,
-    sub: fallback.subs?.[i] ?? fallback.price,
-    variantId: null,
-    available: false,
-    price: fallback.price,
-    barSub: barSub(label),
-  }));
+
+  if (r) {
+    const first = offer.options[0];
+    const note = r.preparing
+      ? "Joins the range once the core postings sell through."
+      : r.handle === "the-dossier"
+        ? "Arrives with a single-use code that credits the price toward your first flacon."
+        : "Return the empty flask with your next order.";
+    return (
+      <main className="pdp">
+        <div className="wrap stack stack--pdp">
+          <div className="pdp__grid">
+            <ProductMedia name={r.name} images={[r.image]} ratio="11" />
+            <div className="pdp__info">
+              <Link href="/range" className="crumb">
+                ← THE RANGE
+              </Link>
+              <Title eyebrow={`${r.role} · ${r.format}`} name={r.name} line={r.line} />
+              <p className="lede">{r.desc}</p>
+              <ProductBuy
+                name={r.name}
+                optionLabel={offer.optionLabel}
+                options={offer.options}
+                preparing={Boolean(r.preparing)}
+                note={note}
+                barSubs={offer.options.map((o) =>
+                  (r.byPosting ? `${r.format} · ${o.label}` : r.format).toUpperCase(),
+                )}
+                more={r.handle === "the-refill" ? { label: "How the programme works", href: "/refill-programme" } : undefined}
+              />
+              <Specs
+                specs={[
+                  { k: "Format", v: r.format },
+                  { k: "Price", v: money(first?.price ?? r.price, first?.currency), mono: true },
+                ]}
+              />
+              <Details details={[{ title: "Shipping and returns", body: SHIPPING_COPY }]} />
+            </div>
+          </div>
+          {r.handle === "the-dossier" && (
+            <section className="stack stack--32" aria-labelledby="inside-title">
+              <div className="rule-head">
+                <h2 className="h3" id="inside-title">
+                  Inside the Dossier
+                </h2>
+              </div>
+              <div className="cards cards--tight">
+                {POSTINGS.map((x) => (
+                  <PostingCard key={x.handle} posting={x} size="md" showPrice={false} />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  const care = c!;
+  const scent = posting(care.scent)!;
+  const also = CARE.filter((x) => x.step === care.step && x.handle !== care.handle);
+  return (
+    <main className="pdp">
+      <div className="wrap stack stack--pdp">
+        <div className="pdp__grid">
+          <ProductMedia name={care.name} images={[care.image]} ratio="45" />
+          <div className="pdp__info">
+            <Link href="/field-care" className="crumb">
+              ← FIELD CARE
+            </Link>
+            <Title eyebrow={`Field Care · ${care.code}`} name={care.name} line={care.line} />
+            <p className="lede">
+              {care.note} Scented with {titleCase(scent.name)}, so it layers with the fragrance.
+            </p>
+            <ProductBuy
+              name={care.name}
+              optionLabel={offer.optionLabel}
+              options={offer.options}
+              preparing={false}
+              note={null}
+              barSubs={offer.options.map((o) => `${care.code} · ${o.label}`.toUpperCase())}
+            />
+            <Specs
+              specs={[
+                { k: "Step", v: care.step },
+                { k: "Scent", v: `${scent.name} · ${scent.num}`, swatch: scent.liquid },
+                { k: "Size", v: care.size, mono: true },
+                { k: "Key ingredients", v: care.keys },
+                { k: "Vessel", v: care.vessel },
+              ]}
+            />
+            <Details
+              details={[
+                { title: "Full ingredients", body: "[Final INCI list from the formulator, after regulatory review]" },
+                { title: "Shipping and returns", body: SHIPPING_COPY },
+              ]}
+            />
+          </div>
+        </div>
+        {also.length > 0 && (
+          <section className="stack stack--32" aria-labelledby="also-title">
+            <div className="rule-head">
+              <h2 className="h3" id="also-title">
+                Also for {care.step.toLowerCase()}
+              </h2>
+              <span className="mono mono--ash">FIELD CARE</span>
+            </div>
+            <div className="cards cards--tight">
+              {also.map((x) => (
+                <CareCard key={x.handle} item={x} compact />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </main>
+  );
 }
 
-function Specs({ rows }: { rows: { k: string; v: string; swatch?: string; mono?: boolean }[] }) {
+function Title({ eyebrow, name, line }: { eyebrow: string; name: string; line: string }) {
   return (
-    <dl className="rows">
-      {rows.map((r) => (
-        <div key={r.k} className="row">
-          <dt className="row__k">{r.k}</dt>
-          <dd className={r.mono ? "row__v row__v--mono" : "row__v"}>
-            {r.swatch ? <span className="swatch swatch--12" style={{ background: r.swatch }} aria-hidden="true" /> : null}
-            <span>{r.v}</span>
+    <div className="stack stack--18">
+      <div className="eyebrow">{eyebrow}</div>
+      <h1 className="h1 name pdp__title">{name}</h1>
+      <p className="pdp__line">{line}</p>
+    </div>
+  );
+}
+
+function Specs({ specs, prov = false }: { specs: Spec[]; prov?: boolean }) {
+  return (
+    <dl className="specs">
+      {specs.map((s) => (
+        <div key={s.k} className={prov ? "spec spec--prov" : "spec"}>
+          <dt className="spec__k">{s.k}</dt>
+          <dd className={s.mono ? "spec__v spec__v--mono" : "spec__v"}>
+            {s.swatch && <span className="swatch swatch--12" style={{ background: s.swatch }} aria-hidden="true" />}
+            <span>{s.v}</span>
           </dd>
         </div>
       ))}
@@ -83,276 +282,15 @@ function Specs({ rows }: { rows: { k: string; v: string; swatch?: string; mono?:
   );
 }
 
-function Details({ items }: { items: [string, string][] }) {
+function Details({ details }: { details: Detail[] }) {
   return (
     <div className="accordion">
-      {items.map(([title, body]) => (
-        <details key={title}>
-          <summary>{title}</summary>
-          <p>{body}</p>
+      {details.map((d) => (
+        <details key={d.title}>
+          <summary>{d.title}</summary>
+          <p>{d.body}</p>
         </details>
       ))}
     </div>
-  );
-}
-
-function Titles({ crumb, eyebrow, name, line }: { crumb: { href: string; label: string }; eyebrow: string; name: string; line: string }) {
-  return (
-    <>
-      <Link href={crumb.href} className="crumb">
-        ← {crumb.label}
-      </Link>
-      <div className="product__titles">
-        <p className="eyebrow">{eyebrow}</p>
-        <h1 className="display product__name">{name}</h1>
-        <p className="product__line">{line}</p>
-      </div>
-    </>
-  );
-}
-
-function capital(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-}
-
-export default async function ProductPage({ params }: Props) {
-  const { handle } = await params;
-  const care = getCareProduct(handle);
-  const range = getRangeItem(handle);
-  const product = await getProduct(handle);
-
-  /* ---------------------------------------------------------------- */
-  /* Field Care                                                        */
-  /* ---------------------------------------------------------------- */
-  if (care) {
-    const options = buyOptions(product?.variants ?? [], { labels: care.options, price: care.price }, (l) =>
-      [care.code, l || care.size].join(" · ").toUpperCase(),
-    );
-    const also = careLine.filter((p) => p.step === care.step && p.handle !== care.handle);
-    return (
-      <div className="product">
-        <div className="wrap flow flow--loose">
-          <div className="product__grid">
-            <ProductMedia images={[product?.image ?? shopifyImage(care.image, 1400)]} alt={`${care.title}, ${care.size}`} />
-            <div className="product__body">
-              <Titles crumb={{ href: "/field-care", label: "Field Care" }} eyebrow={`Field Care · ${care.code}`} name={care.title} line={care.line} />
-              <p className="lead">
-                {care.description} Scented with {care.scent}, so it layers with the fragrance.
-              </p>
-              <ProductBuy name={care.title} options={options} optionLabel={care.options ? "Scent" : "Format"} />
-              <Specs
-                rows={[
-                  { k: "Step", v: care.step },
-                  { k: "Scent", v: `${care.scent} · ${scentNumber[care.scent]}`, swatch: scentColor[care.scent] },
-                  { k: "Size", v: care.size, mono: true },
-                  { k: "Key ingredients", v: care.keyIngredients.join(", ") },
-                  { k: "Vessel", v: care.packaging },
-                ]}
-              />
-              <Details
-                items={[
-                  ["How to use", care.use],
-                  ["Free from", care.freeFrom.join(" · ")],
-                  ["Full ingredients", "[Final INCI list from the formulator, after regulatory review]"],
-                  ["Shipping and returns", SHIPPING],
-                ]}
-              />
-            </div>
-          </div>
-
-          {also.length ? (
-            <section className="flow" style={{ gap: 32 }} aria-labelledby="also-title">
-              <div className="list-head">
-                <h2 id="also-title" className="display h3">
-                  Also for {care.step.toLowerCase()}
-                </h2>
-                <span className="mono mono--ash">FIELD CARE</span>
-              </div>
-              <div className="cards cards--220">
-                {also.map((p) => (
-                  <CareCard key={p.handle} p={p} mini />
-                ))}
-              </div>
-            </section>
-          ) : null}
-        </div>
-      </div>
-    );
-  }
-
-  /* ---------------------------------------------------------------- */
-  /* Postings                                                          */
-  /* ---------------------------------------------------------------- */
-  if (product?.posting) {
-    const p = product.posting;
-    const name = product.title;
-    const options = buyOptions(product.variants, { price: null }, (l) => `EDP · ${l}`.toUpperCase());
-    const { products: all } = await getPostings();
-    const others = (all.length ? all : fallbackPostings).filter((x) => x.handle !== product.handle);
-    const layers = careLine.filter((c) => c.scent.toLowerCase() === product.handle);
-    const images = [product.image, libraryImage(product.handle), shopifyImage(assets.box, 1400)].filter(
-      (x, i, arr): x is string => Boolean(x) && arr.indexOf(x) === i,
-    );
-    const provenance = [
-      ["Perfumer", p.perfumer],
-      ["Source", p.source],
-      ["Producer", p.producer],
-      ["Composed", p.composedIn],
-      ["Bottled", p.bottledIn],
-    ].filter((r): r is [string, string] => Boolean(r[1]));
-
-    return (
-      <div className="product">
-        <div className="wrap flow flow--loose">
-          <div className="product__grid">
-            <ProductMedia
-              images={images}
-              alt={product.imageAlt || `${name} flacon`}
-              film={p.film}
-              fallback={<Bottle liquid={p.liquid} label={`${p.coordinates} — ${p.hour}`} title={`${name} flacon`} />}
-            />
-            <div className="product__body">
-              <Titles crumb={{ href: "/range", label: "The Postings" }} eyebrow={`Posting ${p.number} · Eau de Parfum`} name={name} line={p.line} />
-              <CoordLine type left={postingLeft(p.number, name)} right={postingRight(p.coordinates, p.hour)} />
-              <p className="lead">{product.description}</p>
-              <ProductBuy name={name} options={options} note="Began with the Dossier? Enter the code from its card in the bag." />
-              <Specs
-                rows={[
-                  { k: "Hero material", v: p.heroMaterial },
-                  { k: "Family", v: p.family },
-                  { k: "Top", v: p.top },
-                  { k: "Heart", v: p.heart },
-                  { k: "Base", v: p.base },
-                  { k: "Liquid", v: p.liquid.toUpperCase(), swatch: p.liquid, mono: true },
-                ]}
-              />
-              <Details
-                items={[
-                  ["The flacon", FLACON],
-                  ["The box", BOX],
-                  ["Ingredients and natural-origin index", "[Final INCI list and ISO 16128 natural-origin figure from the formulator]"],
-                  ["Shipping and returns", SHIPPING],
-                ]}
-              />
-              {provenance.length ? (
-                <section className="provenance" aria-label="Provenance">
-                  <div className="list-head" style={{ paddingBottom: 0, borderBottom: 0 }}>
-                    <p className="eyebrow">Provenance</p>
-                    {p.batch ? <span className="mono mono--pewter" style={{ fontSize: 11 }}>{p.batch.toUpperCase()}</span> : null}
-                  </div>
-                  <dl className="rows">
-                    {provenance.map(([k, v]) => (
-                      <div key={k} className="row row--tight">
-                        <dt className="row__k">{k}</dt>
-                        <dd className="row__v row__v--soft">{v}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </section>
-              ) : null}
-            </div>
-          </div>
-
-          {layers.length ? (
-            <section className="flow" style={{ gap: 32 }} aria-labelledby="layers-title">
-              <div className="list-head">
-                <h2 id="layers-title" className="display h3">
-                  Layers with {capital(name)}
-                </h2>
-                <span className="mono mono--ash">FIELD CARE</span>
-              </div>
-              <div className="cards cards--220">
-                {layers.map((c) => (
-                  <CareCard key={c.handle} p={c} mini />
-                ))}
-              </div>
-            </section>
-          ) : null}
-
-          <OtherPostings postings={others} title="The other postings" />
-        </div>
-      </div>
-    );
-  }
-
-  /* ---------------------------------------------------------------- */
-  /* The Range (and any other Shopify product)                         */
-  /* ---------------------------------------------------------------- */
-  if (!range && !product) notFound();
-  const name = product?.title ?? range!.title;
-  const isRefill = handle === "the-refill";
-  const isDossier = handle === "the-dossier";
-  const postings = isDossier ? (await getPostings()).products : [];
-  const options = buyOptions(
-    product?.variants ?? [],
-    {
-      labels: isRefill ? fallbackPostings.map((x) => x.title.toUpperCase()) : undefined,
-      subs: isRefill ? fallbackPostings.map((x) => `${x.posting!.number} · ${x.posting!.hour}`) : undefined,
-      price: range?.price ?? null,
-    },
-    (l) => [range?.format ?? "", l].filter(Boolean).join(" · ").toUpperCase(),
-  );
-  const note = range?.preparing
-    ? "Joins the range once the core postings sell through."
-    : isDossier
-      ? "Arrives with a single-use code that credits the price toward your first flacon."
-      : isRefill
-        ? "Return the empty flask with your next order."
-        : undefined;
-  const image = product?.image ?? libraryImage(handle);
-
-  return (
-    <div className="product">
-      <div className="wrap flow flow--loose">
-        <div className="product__grid">
-          <ProductMedia images={image ? [image] : []} alt={name} ratio="11" />
-          <div className="product__body">
-            <Titles
-              crumb={{ href: "/range", label: "The Range" }}
-              eyebrow={range ? `${range.role} · ${range.format}` : "Merowen"}
-              name={name}
-              line={range?.line ?? ""}
-            />
-            <p className="lead">{range?.body ?? product?.description}</p>
-            <ProductBuy
-              name={name}
-              options={options}
-              optionLabel={isRefill ? "Posting" : "Option"}
-              note={note}
-              preparing={range?.preparing}
-              more={isRefill ? { href: "/refill-programme", label: "How the programme works" } : undefined}
-            />
-            {range ? (
-              <Specs
-                rows={[
-                  { k: "Format", v: range.format },
-                  { k: "Price", v: options[0]?.price ?? range.price, mono: true },
-                ]}
-              />
-            ) : null}
-            <Details items={[["Shipping and returns", SHIPPING]]} />
-          </div>
-        </div>
-        {isDossier ? <OtherPostings postings={postings} title="Inside the Dossier" /> : null}
-      </div>
-    </div>
-  );
-}
-
-function OtherPostings({ postings, title }: { postings: Product[]; title: string }) {
-  if (!postings.length) return null;
-  return (
-    <section className="flow" style={{ gap: 32 }} aria-labelledby="others-title">
-      <div className="list-head">
-        <h2 id="others-title" className="display h3">
-          {title}
-        </h2>
-      </div>
-      <div className="cards cards--240">
-        {postings.map((p) => (
-          <PostingCard key={p.handle} p={p} small showPrice={false} />
-        ))}
-      </div>
-    </section>
   );
 }

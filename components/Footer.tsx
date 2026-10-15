@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { FooterSignup } from "./InnerCircle";
+import { FooterInnerCircle } from "./InnerCircleForm";
 
-const COLS = [
+const COLUMNS = [
   {
     title: "Shop",
     links: [
@@ -16,45 +16,37 @@ const COLS = [
     links: [
       ["About", "/about"],
       ["The Refill Programme", "/refill-programme"],
-      ["Your Bag", "/cart"],
-      ["Contact", "mailto:[CONTACT EMAIL]"],
+      ["Shipping", "/about#packaging"],
+      ["Contact", "/about#contact"],
     ],
   },
 ];
 
-export function Footer() {
+export function Footer({ version }: { version: string }) {
   return (
-    <footer className="site-footer">
+    <footer className="footer">
       <div className="wrap">
-        <div className="site-footer__grid">
-          <div className="site-footer__brand">
-            <span className="site-footer__word">MEROWEN</span>
+        <div className="footer__grid">
+          <div className="footer__brand">
+            <div className="footer__word">MEROWEN</div>
             <p className="small">Composed in the wild. Worn in the dark.</p>
-            <p className="mono mono--ash" style={{ fontSize: 11, lineHeight: 1.6, letterSpacing: "0.1em" }}>
-              PARK CITY, UTAH · EST. 2026
-            </p>
-            <FooterSignup />
+            <div className="mono mono--ash">PARK CITY, UTAH · EST. 2026</div>
+            <FooterInnerCircle />
           </div>
-          {COLS.map((col) => (
-            <nav key={col.title} className="site-footer__col" aria-label={col.title}>
-              <p className="eyebrow">{col.title}</p>
-              {col.links.map(([label, href]) =>
-                href.startsWith("/") ? (
-                  <Link key={label} href={href}>
-                    {label}
-                  </Link>
-                ) : (
-                  <a key={label} href={href}>
-                    {label}
-                  </a>
-                ),
-              )}
-            </nav>
+          {COLUMNS.map((col) => (
+            <div className="footer__col" key={col.title}>
+              <div className="eyebrow">{col.title}</div>
+              {col.links.map(([label, href]) => (
+                <Link key={label} href={href} className="footer__link">
+                  {label}
+                </Link>
+              ))}
+            </div>
           ))}
         </div>
-        <div className="site-footer__legal">
-          <span>© {new Date().getFullYear()} MEROWEN — PARK CITY, UTAH · 40.6461° N, 111.4980° W</span>
-          <span>CHECKOUT BY SHOPIFY</span>
+        <div className="footer__legal">
+          <span>© 2026 MEROWEN — PARK CITY, UTAH · 40.6461° N, 111.4980° W</span>
+          <span>CHECKOUT BY SHOPIFY · SITE {version.toUpperCase()}</span>
         </div>
       </div>
     </footer>

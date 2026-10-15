@@ -2,60 +2,59 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import type { Product } from "@/lib/types";
+import { POSTINGS_BY_HOUR, hh, postingForHour } from "@/lib/catalog";
 import { PostingCard } from "./Cards";
 
-const hourOf = (p: Product) => parseInt(p.posting?.hour ?? "0", 10) || 0;
 const TICKS = [0, 6, 12, 18, 24];
+const pct = (hour: number) => `${((hour / 24) * 100).toFixed(2)}%`;
 
-/**
- * The 24-hour rail, the "Find your hour" slider and the posting cards.
- * The slider starts at the visitor's local hour and lights the latest posting
- * at or before it (wrapping round to the last one). Hovering a card overrides it.
- */
-export function FindYourHour({ postings }: { postings: Product[] }) {
-  const byHour = [...postings].sort((a, b) => hourOf(a) - hourOf(b));
+// The 24-hour rail. The slider starts at the visitor's local hour; the posting that covers that hour is lit,
+// and hovering a card overrides it.
+export function FindYourHour() {
   const [hour, setHour] = useState(20);
   const [hover, setHover] = useState<string | null>(null);
 
   useEffect(() => setHour(new Date().getHours()), []);
 
-  const h = hour % 24;
-  const pick = byHour.filter((p) => hourOf(p) <= h).pop() ?? byHour[byHour.length - 1];
-  const lit = hover ?? pick?.handle;
-  const hourText = `${String(h).padStart(2, "0")}:00`;
+  const pick = postingForHour(hour);
+  const lit = hover ?? pick.handle;
 
   return (
     <>
       <div className="hours">
         <div className="rail" aria-hidden="true">
           <div className="rail__line" />
-          <div className="rail__marker" style={{ left: `${(hour / 24) * 100}%` }} />
+          <div className="rail__marker" style={{ left: pct(hour) }} />
           {TICKS.map((t) => (
             <div
               key={t}
               className="rail__tick"
-              style={{ left: `${(t / 24) * 100}%`, transform: `translateX(${t === 0 ? "0" : t === 24 ? "-100%" : "-50%"})` }}
+              style={{ left: pct(t), transform: `translateX(${t === 0 ? "0" : t === 24 ? "-100%" : "-50%"})` }}
             >
               {String(t).padStart(2, "0")}
             </div>
           ))}
-          {byHour.map((p) => (
-            <div
+          {POSTINGS_BY_HOUR.map((p) => (
+            <Link
               key={p.handle}
+              href={`/products/${p.handle}`}
+              tabIndex={-1}
               className={lit === p.handle ? "rail__stop is-lit" : "rail__stop"}
-              style={{ left: `${(hourOf(p) / 24) * 100}%` }}
+              style={{ left: pct(p.hour) }}
+              onMouseEnter={() => setHover(p.handle)}
+              onMouseLeave={() => setHover(null)}
             >
-              <span className="rail__long">
-                {p.posting?.hour} {p.title.toUpperCase()}
+              <span className="rail__stop-label rail__stop-label--long">
+                {hh(p.hour)} {p.name.toUpperCase()}
               </span>
-              <span className="rail__short">{p.posting?.hour.slice(0, 2)}</span>
-            </div>
+              <span className="rail__stop-label rail__stop-label--short">{String(p.hour).padStart(2, "0")}</span>
+              <span className="rail__stop-dot" />
+            </Link>
           ))}
         </div>
         <input
+          className="hour-input"
           type="range"
-          className="hours__range"
           min={0}
           max={24}
           step={1}
@@ -65,26 +64,29 @@ export function FindYourHour({ postings }: { postings: Product[] }) {
             setHover(null);
           }}
           aria-label="Find your hour"
-          aria-valuetext={hourText}
+          aria-valuetext={hh(hour % 24)}
         />
-        <div className="hours__foot">
-          <div className="hours__now">
+        <div className="hour-pick">
+          <div className="hour-pick__now">
             <span className="eyebrow">Find your hour</span>
-            <span className="hours__time">{hourText}</span>
+            <span className="hour-pick__time">{hh(hour % 24)}</span>
           </div>
-          {pick ? (
-            <Link href={`/products/${pick.handle}`} className="hours__pick">
-              <span className="mono mono--ash">POSTING {pick.posting?.number}</span>
-              <span className="hours__name">{pick.title.toUpperCase()}</span>
-              <em className="hours__line">{pick.posting?.line}</em>
-            </Link>
-          ) : null}
+          <Link href={`/products/${pick.handle}`} className="hour-pick__link" aria-live="polite">
+            <span className="mono mono--ash">POSTING {pick.num}</span>
+            <span className="hour-pick__name">{pick.name}</span>
+            <em className="hour-pick__line">{pick.line}</em>
+          </Link>
         </div>
       </div>
-
       <div className="cards">
-        {byHour.map((p) => (
-          <PostingCard key={p.handle} p={p} lit={lit === p.handle} onHover={setHover} />
+        {POSTINGS_BY_HOUR.map((p) => (
+          <PostingCard
+            key={p.handle}
+            posting={p}
+            lit={lit === p.handle}
+            onEnter={() => setHover(p.handle)}
+            onLeave={() => setHover(null)}
+          />
         ))}
       </div>
     </>

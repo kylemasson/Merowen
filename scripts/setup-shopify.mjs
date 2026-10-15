@@ -44,12 +44,6 @@ const productFields = [
   ["notes_heart", "Heart notes", { type: text }],
   ["notes_base", "Base notes", { type: text }],
   ["liquid_color", "Liquid colour", { type: "color" }],
-  ["perfumer", "Perfumer", { type: text }],
-  ["source", "Source (material, place, process)", { type: text }],
-  ["producer", "Producer / co-operative", { type: text }],
-  ["composed_in", "Composed in", { type: text }],
-  ["bottled_in", "Bottled in", { type: text }],
-  ["batch", "Batch", { type: text }],
   ["film", "Film (4:5 loop)", video],
   ["film_poster", "Film poster", image],
 ];

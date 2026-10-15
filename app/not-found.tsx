@@ -2,17 +2,16 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="page" style={{ minHeight: "60vh" }}>
+    <main className="page">
       <div className="wrap stack stack--28">
-        <p className="mono mono--ash">00.0°N 00.0°E — --:--</p>
-        <h1 className="display h1">
-          Off <em>the map.</em>
+        <div className="eyebrow">404</div>
+        <h1 className="h1 h1--page">
+          Off the map. <em>No posting here.</em>
         </h1>
-        <p className="lead">This page doesn’t exist, or it has moved on.</p>
-        <Link href="/" className="btn btn--ghost self-start">
-          Return to Merowen
+        <Link href="/range" className="btn btn--ghost btn--start">
+          The Postings
         </Link>
       </div>
-    </div>
+    </main>
   );
 }

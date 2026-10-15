@@ -1,16 +1,10 @@
 import Link from "next/link";
-import { HeroFilm } from "@/components/HeroFilm";
-import { InnerCircle } from "@/components/InnerCircle";
+import { CareTeaserCard, RangeCard } from "@/components/Cards";
+import { CoordLine } from "@/components/CoordLine";
 import { FindYourHour } from "@/components/FindYourHour";
-import { CareTile, RangeCard } from "@/components/Cards";
-import { CoordLine, postingLeft, postingRight } from "@/components/CoordLine";
-import { getHomeMedia, getPostings } from "@/lib/shopify";
-import { assets, shopifyImage } from "@/lib/assets";
-import { rangeItems } from "@/lib/fallback";
-import { getCareProduct } from "@/lib/fieldcare";
-
-// Prices, stock and films come live from Shopify on each request.
-export const dynamic = "force-dynamic";
+import { HeroMedia } from "@/components/HeroMedia";
+import { InnerCircleForm } from "@/components/InnerCircleForm";
+import { RANGE, careItem, media, posting } from "@/lib/catalog";
 
 const PROOFS = [
   { k: "Natural-origin index", v: "Calculated to ISO 16128 and printed on every label." },
@@ -19,34 +13,28 @@ const PROOFS = [
   { k: "A lifetime refill", v: "A 200 ml flask for every posting. Return the empty." },
 ];
 
-const HOME_CARE = ["aftershave-balm", "shampoo", "face-wash", "deodorant"];
+const CARE_TEASER = ["aftershave-balm", "shampoo", "basalt-face-wash", "deodorant"].map((h) => careItem(h)!);
 
-export default async function Home() {
-  const [{ products: postings }, media] = await Promise.all([getPostings(), getHomeMedia()]);
-  const lead = postings.find((p) => p.handle === "mirbat") ?? postings[0];
-  const lp = lead.posting!;
-
+export default function HomePage() {
+  const mirbat = posting("mirbat")!;
   return (
-    <>
+    <main>
       <section className="hero" aria-label="Merowen">
-        <HeroFilm
-          media={media}
-          stills={{
-            desktop: media.poster ?? shopifyImage(assets.heroDesktop, 2400),
-            mobile: shopifyImage(assets.heroMobile, 1200),
-            alt: "The Mirbat flacon on wet basalt by the sea at night",
-          }}
+        <HeroMedia
+          still={media("merowen_brand_hero_v05.jpg")}
+          stillMobile={media("merowen_hero_mobile_v05.jpg")}
+          alt="Mirbat on wet basalt at night"
         />
         <div className="hero__inner">
           <div className="hero__copy">
-            <p className="eyebrow">Park City, Utah</p>
-            <h1 className="display hero__title">
+            <div className="eyebrow eyebrow--stone">Park City, Utah</div>
+            <h1 className="h1">
               Composed in the wild. <em>Worn in the dark.</em>
             </h1>
-            <p className="lead hero__lead">
+            <p className="lede">
               Four Eaux de Parfum. Each names one place, one hour and one material, and can be traced to them.
             </p>
-            <div className="hero__ctas">
+            <div className="btn-row">
               <Link href="/range" className="btn btn--primary">
                 The Postings
               </Link>
@@ -54,59 +42,59 @@ export default async function Home() {
                 Begin with the Dossier
               </Link>
             </div>
-            <CoordLine type left={postingLeft(lp.number, lead.title)} right={postingRight(lp.coordinates, lp.hour)} />
+            <CoordLine posting={mirbat} animate />
           </div>
         </div>
       </section>
 
-      <section id="postings" className="section" aria-labelledby="postings-title">
-        <div className="wrap flow">
-          <div className="head">
-            <div className="stack" style={{ maxWidth: 640 }}>
-              <p className="eyebrow">The Postings</p>
-              <h2 id="postings-title" className="display h2">
+      <section className="section" aria-labelledby="postings-title">
+        <div className="wrap stack stack--lg">
+          <div className="head-row">
+            <div className="head-row__title">
+              <div className="eyebrow">The Postings</div>
+              <h2 className="h2" id="postings-title">
                 A wardrobe of <em>hours.</em>
               </h2>
             </div>
-            <p className="body head__aside">
+            <p className="copy head-row__aside">
               Four unisex Eaux de Parfum, each tied to one place and one hour. Together they cover a full day.
             </p>
           </div>
-          <FindYourHour postings={postings} />
+          <FindYourHour />
         </div>
       </section>
 
-      <section id="range" className="section section--alt" aria-labelledby="range-title">
-        <div className="wrap flow">
-          <div className="head">
-            <div className="stack">
-              <p className="eyebrow">The Range</p>
-              <h2 id="range-title" className="display h2">
+      <section className="section section--alt" aria-labelledby="range-title">
+        <div className="wrap stack stack--lg">
+          <div className="head-row">
+            <div className="head-row__title">
+              <div className="eyebrow">The Range</div>
+              <h2 className="h2" id="range-title">
                 Discover. Wear. Carry. <em>Keep.</em>
               </h2>
             </div>
-            <Link href="/range" className="btn btn--ghost self-start">
+            <Link href="/range" className="btn btn--ghost btn--start">
               The full range
             </Link>
           </div>
           <div className="cards">
-            {rangeItems.map((r) => (
-              <RangeCard key={r.handle} r={r} />
+            {RANGE.map((r) => (
+              <RangeCard key={r.handle} item={r} tag="role" />
             ))}
           </div>
         </div>
       </section>
 
       <section className="section" aria-labelledby="proof-title">
-        <div className="wrap flow flow--tight">
-          <h2 id="proof-title" className="display h2" style={{ maxWidth: 720 }}>
+        <div className="wrap stack stack--lg">
+          <h2 className="h2 measure" id="proof-title">
             Traceable to <em>the source.</em>
           </h2>
           <div className="proofs">
             {PROOFS.map((p) => (
-              <div key={p.k} className="proof">
-                <h3 className="proof__k">{p.k}</h3>
-                <p className="small">{p.v}</p>
+              <div className="proof" key={p.k}>
+                <div className="proof__k">{p.k}</div>
+                <div className="small">{p.v}</div>
               </div>
             ))}
           </div>
@@ -114,49 +102,61 @@ export default async function Home() {
       </section>
 
       <section className="section section--rule" aria-labelledby="care-title">
-        <div className="wrap flow flow--tight">
-          <div className="split split--end" style={{ gap: "24px clamp(40px, 6vw, 96px)" }}>
+        <div className="wrap stack stack--lg">
+          <div className="split split--end">
             <div className="stack">
-              <p className="eyebrow">Field Care</p>
-              <h2 id="care-title" className="display h2--sm">
+              <div className="eyebrow">Field Care</div>
+              <h2 className="h2 h2--sm" id="care-title">
                 The kit <em>behind the scent.</em>
               </h2>
             </div>
-            <div className="stack stack--24" style={{ maxWidth: 460 }}>
-              <p className="lead">
-                Ten everyday essentials for shave, hair, skin and body, each scented with one of the four postings so it
-                layers with the fragrance.
+            <div className="stack stack--24 measure-sm">
+              <p className="lede">
+                Ten everyday essentials for shave, hair, skin and body, each scented with one of the four postings so
+                it layers with the fragrance.
               </p>
-              <Link href="/field-care" className="btn btn--ghost self-start">
+              <Link href="/field-care" className="btn btn--ghost btn--start">
                 See Field Care
               </Link>
             </div>
           </div>
           <div className="cards cards--four">
-            {HOME_CARE.map((h) => {
-              const p = getCareProduct(h);
-              return p ? <CareTile key={h} p={p} /> : null;
-            })}
+            {CARE_TEASER.map((c) => (
+              <CareTeaserCard key={c.handle} item={c} />
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="close-band" aria-labelledby="close-title">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+      <section className="band" aria-labelledby="band-title">
         <img
-          src={shopifyImage(assets.wearers, 2400)}
+          src={media("merowen_brand_wearers_v01.jpg")}
           alt="Two wearers walking a sea-cliff path at dusk"
           loading="lazy"
           decoding="async"
         />
-        <div className="close-band__copy">
-          <h2 id="close-title" className="display">
+        <div className="band__scrim" aria-hidden="true" />
+        <div className="band__inner">
+          <h2 className="display band__title" id="band-title">
             Leave a trace, <em>not a trail.</em>
           </h2>
         </div>
       </section>
 
-      <InnerCircle />
-    </>
+      <section className="section section--circle" aria-labelledby="circle-title">
+        <div className="wrap split split--end">
+          <div className="stack">
+            <div className="eyebrow">The Inner Circle</div>
+            <h2 className="h2 h2--sm" id="circle-title">
+              First word, <em>before the shelf.</em>
+            </h2>
+          </div>
+          <div className="stack stack--24 measure-sm">
+            <p className="lede">New postings, numbered Extrait batches and refill reminders. Sent rarely.</p>
+            <InnerCircleForm />
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

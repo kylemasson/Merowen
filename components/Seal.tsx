@@ -1,14 +1,9 @@
-/** The Merowen M seal. Ring in Pewter, M in Bone (or currentColor). */
-export function Seal({ size = 34, ring = "#AEB4BB", mark = "#EDEDEB", weight = 0.9 }: {
-  size?: number;
-  ring?: string;
-  mark?: string;
-  weight?: number;
-}) {
+// The Merowen seal: a pewter ring around the M mark.
+export function Seal({ size = 32, ring = "#AEB4BB", mark = "#EDEDEB" }: { size?: number; ring?: string; mark?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 34 34" fill="none" aria-hidden="true">
-      <circle cx="17" cy="17" r="16" stroke={ring} strokeWidth={weight * 0.9} />
-      <path d="M9 23V11l8 9 8-9v12" stroke={mark} strokeWidth={weight} />
+    <svg className="seal" width={size} height={size} viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <circle cx="14" cy="14" r="13" stroke={ring} />
+      <path d="M8 18.5 V9.5 L14 15 L20 9.5 V18.5" stroke={mark} />
     </svg>
   );
 }

@@ -3,93 +3,71 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { Cart } from "@/lib/types";
-import { OPEN_BAG } from "@/lib/ui";
-import { BagDrawer } from "./BagDrawer";
-import { CoordLine } from "./CoordLine";
+import { useBag } from "./BagContext";
 import { Seal } from "./Seal";
 import { useDialog } from "./useDialog";
+import { CoordLine } from "./CoordLine";
+import { posting } from "@/lib/catalog";
 
-const LEFT = [
+const NAV = [
   { label: "The Postings", href: "/range" },
   { label: "The Dossier", href: "/products/the-dossier" },
   { label: "Field Care", href: "/field-care" },
 ];
 
-const MENU = [...LEFT, { label: "About", href: "/about" }, { label: "Home", href: "/" }];
+const MENU = [...NAV, { label: "About", href: "/about" }, { label: "Home", href: "/" }];
 
-export function Header({ cart }: { cart: Cart | null }) {
+export const pad2 = (n: number) => String(n).padStart(2, "0");
+
+export function Header() {
   const pathname = usePathname();
+  const { bag, setBagOpen, menuOpen, setMenuOpen } = useBag();
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [bagOpen, setBagOpen] = useState(false);
-  const menuRef = useDialog<HTMLDivElement>(menuOpen, () => setMenuOpen(false));
-  const count = cart?.totalQuantity ?? 0;
+  const home = pathname === "/";
 
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 40);
-    on();
-    window.addEventListener("scroll", on, { passive: true });
-    return () => window.removeEventListener("scroll", on);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    const open = () => {
-      setMenuOpen(false);
-      setBagOpen(true);
-    };
-    window.addEventListener(OPEN_BAG, open);
-    return () => window.removeEventListener(OPEN_BAG, open);
-  }, []);
-
-  // Changing route closes the menu and the bag.
-  useEffect(() => {
-    setMenuOpen(false);
-    setBagOpen(false);
-  }, [pathname]);
-
-  const clear = pathname === "/" && !scrolled;
   const current = (href: string) => (pathname === href ? "page" : undefined);
 
   return (
     <>
-      <header className={clear ? "site-header site-header--clear" : "site-header"}>
-        <div className="site-header__inner">
-          <nav className="nav" aria-label="Primary">
-            <button
-              type="button"
-              className="menu-btn"
-              aria-label="Menu"
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen(true)}
-            >
-              <span />
-              <span />
-            </button>
-            <div className="nav__desktop">
-              {LEFT.map((l) => (
-                <Link key={l.href} href={l.href} aria-current={current(l.href)}>
-                  {l.label}
-                </Link>
-              ))}
-            </div>
+      <header className={home && !scrolled ? "site-header site-header--clear" : "site-header"}>
+        <div className="site-header__bar">
+          <nav className="nav nav--start" aria-label="Main">
+            {NAV.map((n) => (
+              <Link key={n.href} href={n.href} className="nav__link" aria-current={current(n.href)}>
+                {n.label}
+              </Link>
+            ))}
           </nav>
-
-          <Link href="/" className="brand" aria-label="Merowen home">
-            <Seal size={28} />
-            <span className="brand__dot" aria-hidden="true">
+          <button
+            type="button"
+            className="menu-btn"
+            aria-label="Menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(true)}
+          >
+            <span />
+            <span />
+          </button>
+          <Link href="/" className="lockup" aria-label="Merowen home">
+            <Seal size={32} />
+            <span className="lockup__dot" aria-hidden="true">
               ·
             </span>
-            <span className="brand__word">MEROWEN</span>
+            <span className="lockup__word" aria-hidden="true">
+              MEROWEN
+            </span>
           </Link>
-
           <div className="nav nav--end">
-            <div className="nav__desktop">
-              <Link href="/about" aria-current={current("/about")}>
-                About
-              </Link>
-            </div>
-            {/* Without JavaScript this is a plain link to the /cart page. */}
+            <Link href="/about" className="nav__link nav__link--wide" aria-current={current("/about")}>
+              About
+            </Link>
             <a
               href="/cart"
               className="bag-btn"
@@ -99,34 +77,38 @@ export function Header({ cart }: { cart: Cart | null }) {
                 setBagOpen(true);
               }}
             >
-              Bag <span className="bag-btn__count">{String(count).padStart(2, "0")}</span>
+              Bag <span className="bag-btn__count">{pad2(bag.count)}</span>
+              <span className="sr-only"> items</span>
             </a>
           </div>
         </div>
       </header>
-
-      {menuOpen ? (
-        <div ref={menuRef} className="menu" role="dialog" aria-modal="true" aria-label="Menu">
-          <div className="menu__top">
-            <span className="brand__word">MEROWEN</span>
-            <button type="button" className="close-btn" onClick={() => setMenuOpen(false)}>
-              Close
-            </button>
-          </div>
-          <nav className="menu__nav" aria-label="Menu">
-            {MENU.map((l) => (
-              <Link key={l.href} href={l.href} onClick={() => setMenuOpen(false)}>
-                {l.label}
-              </Link>
-            ))}
-          </nav>
-          <div className="menu__foot">
-            <CoordLine left="Posting 04 — Kilda" right="57.8°N 8.6°W — 20:00" />
-          </div>
-        </div>
-      ) : null}
-
-      <BagDrawer open={bagOpen} onClose={() => setBagOpen(false)} cart={cart} />
+      {menuOpen && <Menu onClose={() => setMenuOpen(false)} />}
     </>
+  );
+}
+
+function Menu({ onClose }: { onClose: () => void }) {
+  const ref = useDialog<HTMLDivElement>(true, onClose);
+  const kilda = posting("kilda")!;
+  return (
+    <div ref={ref} className="menu" role="dialog" aria-modal="true" aria-label="Menu">
+      <div className="panel-head">
+        <span className="lockup__word">MEROWEN</span>
+        <button type="button" className="panel-close" onClick={onClose}>
+          Close
+        </button>
+      </div>
+      <nav className="menu__nav" aria-label="Menu">
+        {MENU.map((n) => (
+          <Link key={n.href} href={n.href} className="menu__link" onClick={onClose}>
+            {n.label}
+          </Link>
+        ))}
+      </nav>
+      <div className="menu__foot">
+        <CoordLine posting={kilda} />
+      </div>
+    </div>
   );
 }

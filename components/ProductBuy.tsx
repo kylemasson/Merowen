@@ -1,150 +1,140 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useId, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { addToCart, type ActionState } from "@/app/actions";
-import { openBag, toast } from "@/lib/ui";
+import { addToBag, type FormState } from "@/app/actions";
+import { money } from "@/lib/catalog";
+import type { OfferOption } from "@/lib/offers";
+import { useBag } from "./BagContext";
+import { useNarrow } from "./useMotion";
 
-export type BuyOption = {
-  label: string;
-  sub?: string | null;
-  /** Shopify variant id; null on demo data, where the bag explains checkout isn't open yet. */
-  variantId: string | null;
-  available: boolean;
-  price: string | null;
-  barSub: string;
+type Props = {
+  name: string;
+  optionLabel: string | null;
+  options: OfferOption[];
+  preparing: boolean;
+  note: string | null;
+  /** The buy bar's sub-line for each option, e.g. "EDP · 50 ML". */
+  barSubs: string[];
+  more?: { label: string; href: string };
 };
 
-function AddButton({ label, price, className, form }: { label: string; price: string | null; className: string; form?: string }) {
-  const { pending } = useFormStatus();
-  return (
-    <button type="submit" className={className} disabled={pending} form={form}>
-      {pending ? "Adding…" : label}
-      {!pending && price ? <span className="price-inline">— {price}</span> : null}
-    </button>
-  );
-}
+const idle: FormState = { ok: false, message: null };
 
-/**
- * Option buttons, Add to bag, the note under it, and the sticky buy bar that
- * appears on narrow screens once the main buy block scrolls out of view.
- */
-export function ProductBuy({
-  name,
-  options,
-  optionLabel = "Size",
-  note,
-  more,
-  preparing = false,
-}: {
-  name: string;
-  options: BuyOption[];
-  optionLabel?: string;
-  note?: string;
-  more?: { href: string; label: string };
-  preparing?: boolean;
-}) {
-  const [index, setIndex] = useState(0);
-  const option = options[Math.min(index, options.length - 1)];
-  const [state, action] = useActionState<ActionState, FormData>(addToCart, null);
-  const formId = useId();
+// Options, the Add button and, on phones, the sticky buy bar that appears once the buy block scrolls away.
+export function ProductBuy({ name, optionLabel, options, preparing, note, barSubs, more }: Props) {
+  const { setBagOpen, bagOpen, menuOpen, say } = useBag();
+  const [selected, setSelected] = useState(0);
+  const [state, action] = useActionState(addToBag, idle);
+  const [notified, setNotified] = useState(false);
+  const [buyVisible, setBuyVisible] = useState(true);
   const buyRef = useRef<HTMLDivElement>(null);
-  const [showBar, setShowBar] = useState(false);
+  const narrow = useNarrow();
+  const option = options[selected] ?? options[0];
+  const canBuy = !preparing && Boolean(option?.available && option.variantId);
+  const price = option ? money(option.price, option.currency) : "";
 
-  // Adding opens the bag; anything else (demo mode, errors) shows a short note.
+  // Adding opens the drawer; a failure shows a toast.
+  const seen = useRef(state.at);
   useEffect(() => {
-    if (!state) return;
-    if (state.ok) openBag();
-    else toast(state.message);
-  }, [state]);
+    if (state.at === seen.current) return;
+    seen.current = state.at;
+    if (state.ok) setBagOpen(true);
+    else if (state.message) say(state.message);
+  }, [state, setBagOpen, say]);
 
   useEffect(() => {
     const el = buyRef.current;
-    if (!el || preparing || !("IntersectionObserver" in window)) return;
-    const narrow = window.matchMedia("(max-width: 759px)");
-    let out = false;
-    const update = () => setShowBar(narrow.matches && out);
-    const io = new IntersectionObserver(([e]) => {
-      out = !e.isIntersecting;
-      update();
-    });
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([entry]) => setBuyVisible(entry.isIntersecting));
     io.observe(el);
-    narrow.addEventListener("change", update);
-    return () => {
-      io.disconnect();
-      narrow.removeEventListener("change", update);
-    };
-  }, [preparing]);
+    return () => io.disconnect();
+  }, []);
+
+  const showBar = narrow && canBuy && !buyVisible && !bagOpen && !menuOpen;
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (showBar) root.dataset.buybar = "on";
-    else delete root.dataset.buybar;
-    return () => {
-      delete root.dataset.buybar;
-    };
+    document.body.classList.toggle("has-buybar", showBar);
+    return () => document.body.classList.remove("has-buybar");
   }, [showBar]);
-
-  const soldOut = Boolean(option?.variantId) && !option?.available;
 
   return (
     <>
-      {options.length > 1 ? (
-        <div className="options">
-          <p className="options__label" id={`${formId}-label`}>
-            {optionLabel}
-          </p>
-          <div className="options__grid" role="group" aria-labelledby={`${formId}-label`}>
+      <form id="buy-form" action={action} className="stack stack--32">
+        {optionLabel && options.length > 1 && (
+          <fieldset className="options">
+            <legend className="eyebrow">{optionLabel}</legend>
             {options.map((o, i) => (
-              <button key={o.label + i} type="button" className="option" aria-pressed={i === index} onClick={() => setIndex(i)}>
+              <label key={`${o.label}-${i}`} className="option">
+                <input
+                  type="radio"
+                  name="variantId"
+                  value={o.variantId ?? ""}
+                  checked={i === selected}
+                  onChange={() => setSelected(i)}
+                />
                 <span className="option__label">{o.label}</span>
-                {o.sub ? <span className="option__sub">{o.sub}</span> : null}
-              </button>
+                <span className="option__sub">{o.sub ?? money(o.price, o.currency)}</span>
+              </label>
             ))}
-          </div>
-        </div>
-      ) : null}
-
-      <div ref={buyRef} className="buy">
-        {preparing ? (
-          <a href="#inner-circle" className="btn btn--ghost btn--block">
-            Notify me
-          </a>
-        ) : (
-          <form id={formId} action={action}>
-            <input type="hidden" name="variantId" value={option?.variantId ?? ""} />
-            {soldOut ? (
-              <button type="button" className="btn btn--primary btn--block" disabled>
-                Sold out
-              </button>
-            ) : (
-              <AddButton label="Add to bag" price={option?.price ?? null} className="btn btn--primary btn--block" />
-            )}
-          </form>
+          </fieldset>
         )}
-        {note ? <p className="buy__note">{note}</p> : null}
-        {more ? (
-          <Link href={more.href} className="text-link">
-            {more.label}
-          </Link>
-        ) : null}
-      </div>
+        {!(optionLabel && options.length > 1) && option?.variantId && (
+          <input type="hidden" name="variantId" value={option.variantId} />
+        )}
 
-      {showBar && !soldOut ? (
+        <div ref={buyRef} className="buy">
+          {preparing ? (
+            <button
+              type="button"
+              className="btn btn--ghost btn--block"
+              onClick={() => {
+                setNotified(true);
+                say("Noted. Sign up to the Inner Circle below and we will write when it is ready.");
+              }}
+            >
+              {notified ? "We will write when it is ready" : "Notify me"}
+            </button>
+          ) : canBuy ? (
+            <AddButton price={price} />
+          ) : (
+            <button type="button" className="btn btn--ghost btn--block" disabled>
+              Not available yet
+            </button>
+          )}
+          {note && <p className="note">{note}</p>}
+          {more && (
+            <Link href={more.href} className="text-link">
+              {more.label}
+            </Link>
+          )}
+        </div>
+      </form>
+
+      {showBar && (
         <>
-          <div className="buybar-spacer" />
+          <div className="buybar-spacer" aria-hidden="true" />
           <div className="buybar">
             <div className="buybar__text">
               <span className="buybar__name">{name}</span>
-              <span className="buybar__sub">{option?.barSub}</span>
+              <span className="buybar__sub">{barSubs[selected] ?? ""}</span>
             </div>
-            <button type="submit" form={formId} className="btn btn--primary">
-              Add{option?.price ? <span className="price-inline">— {option.price}</span> : null}
+            <button type="submit" form="buy-form" className="btn btn--primary">
+              Add — <span className="btn__price">{price}</span>
             </button>
           </div>
         </>
-      ) : null}
+      )}
     </>
+  );
+}
+
+function AddButton({ price }: { price: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <button type="submit" className="btn btn--primary btn--block" disabled={pending}>
+      {pending ? "Adding" : "Add to bag"} — <span className="btn__price">{price}</span>
+    </button>
   );
 }
