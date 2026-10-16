@@ -9,10 +9,10 @@ import {
   BOX_COPY,
   CARE,
   FLACON_COPY,
+  INGREDIENTS_COPY,
   POSTINGS,
   SHIPPING_COPY,
   careItem,
-  media,
   money,
   posting,
   rangeItem,
@@ -47,7 +47,7 @@ export default async function ProductPage({ params }: Props) {
   if (!offer) notFound();
 
   if (p) {
-    const images = [p.image, ...p.extras, media(`merowen_box_${p.handle}_v05.jpg`)];
+    const images = [p.image, ...p.extras, p.box];
     const layers = CARE.filter((x) => x.scent === p.handle);
     const specs: Spec[] = [
       { k: "Hero material", v: p.material },
@@ -60,15 +60,16 @@ export default async function ProductPage({ params }: Props) {
     const details: Detail[] = [
       { title: "The flacon", body: FLACON_COPY },
       { title: "The box", body: BOX_COPY },
-      { title: "Ingredients and natural-origin index", body: "[Final INCI list and ISO 16128 natural-origin figure from the formulator]" },
+      { title: "Ingredients and natural-origin index", body: INGREDIENTS_COPY },
       { title: "Shipping and returns", body: SHIPPING_COPY },
     ];
     const provenance: Spec[] = [
-      { k: "Perfumer", v: "[Perfumer name], working with Merowen in Park City" },
+      { k: p.kind === "city" ? "Composed for" : "From", v: p.place },
+      { k: "Material origin", v: p.origin },
       { k: "Source", v: p.source },
       { k: "Producer", v: p.producer },
-      { k: "Composed", v: "Park City, Utah" },
-      { k: "Bottled", v: "[Bottling partner, city TBC]" },
+      { k: "Composed", v: "In Park City, Utah. Perfumer named on the batch card." },
+      { k: "Bottled", v: "Bottled by hand in Park City, Utah" },
       { k: "Concentration", v: "Eau de Parfum, 20% · 50 ml and 100 ml" },
     ];
     return (
@@ -230,7 +231,7 @@ export default async function ProductPage({ params }: Props) {
             />
             <Details
               details={[
-                { title: "Full ingredients", body: "[Final INCI list from the formulator, after regulatory review]" },
+                { title: "Full ingredients", body: INGREDIENTS_COPY },
                 { title: "Shipping and returns", body: SHIPPING_COPY },
               ]}
             />

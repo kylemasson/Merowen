@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&amp;family=Hanken+Grotesk:wght@300;400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+html,body{margin:0;background:#0B0B0C;color:#EDEDEB;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#EDEDEB;text-decoration:none}
+a:hover{color:#AEB4BB}
+button{font:inherit;color:inherit}
+input::placeholder{color:#8A8A87}
+::selection{background:#AEB4BB;color:#0B0B0C}
+:focus{outline:none}
+:focus-visible{outline:1px solid #CFD3D8;outline-offset:3px}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#0B0B0C;color:#EDEDEB;font:300 16px/1.7 'Hanken Grotesk',sans-serif">
+
+<header data-screen-label="Header" style="position:sticky;top:0;z-index:20;height:72px;background:{{ headerBg }};border-bottom:1px solid {{ headerBorder }};transition:background .4s ease,border-color .4s ease">
+  <div style="max-width:1440px;height:100%;margin:0 auto;padding:0 clamp(16px,4vw,48px);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px">
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <nav style="display:flex;gap:28px;align-items:center">
+        <sc-for list="{{ navLinks }}" as="n" hint-placeholder-count="4">
+          <a href="{{ n.href }}" onClick="{{ n.go }}" style="display:flex;align-items:center;min-height:44px;white-space:nowrap;flex:none;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:{{ n.color }}">{{ n.label }}</a>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ openMenu }}" aria-label="Menu" aria-expanded="{{ menuExpanded }}" style="justify-self:start;background:none;border:0;padding:0;min-width:44px;min-height:44px;display:flex;flex-direction:column;justify-content:center;gap:6px;cursor:pointer">
+        <span style="display:block;width:22px;height:1px;background:#EDEDEB"></span>
+        <span style="display:block;width:22px;height:1px;background:#EDEDEB"></span>
+      </button>
+    </sc-if>
+    <a href="#/" onClick="{{ goHome }}" aria-label="Merowen home" style="display:flex;align-items:center;gap:14px;min-height:44px">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="#AEB4BB"></circle><path d="M8 18.5 V9.5 L14 15 L20 9.5 V18.5" stroke="#EDEDEB"></path></svg>
+      <span aria-hidden="true" style="font:400 19px/1 'Cormorant Garamond',serif;color:#AEB4BB">·</span>
+      <span style="font:400 19px/1 'Cormorant Garamond',serif;letter-spacing:.3em;margin-right:-.3em;color:#EDEDEB">MEROWEN</span>
+    </a>
+    <div style="justify-self:end;display:flex;align-items:center;gap:28px">
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+        <a href="#/range" onClick="{{ goRange }}" style="display:flex;align-items:center;min-height:44px;white-space:nowrap;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#B4B4B1">The Range</a>
+      </sc-if>
+      <button onClick="{{ openCart }}" style="background:none;border:0;padding:0;min-height:44px;display:flex;align-items:center;gap:10px;cursor:pointer;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#EDEDEB">Bag <span style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#AEB4BB">{{ cartCount }}</span></button>
+    </div>
+  </div>
+</header>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<main>
+  <section data-screen-label="Home · Hero" style="position:relative;margin-top:-72px;min-height:max(100svh,640px);max-height:none;overflow:hidden;background:#0B0B0C;display:flex">
+    <sc-if value="{{ heroHasFilm }}" hint-placeholder-val="{{ false }}">
+      <video ref="{{ heroVidRef }}" src="{{ heroFilm }}" poster="{{ heroSrc }}" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:{{ heroPos }}"></video>
+    </sc-if>
+    <sc-if value="{{ heroNoFilm }}" hint-placeholder-val="{{ true }}">
+      <img ref="{{ heroImgRef }}" src="{{ heroSrc }}" alt="Blackfriars on wet stone at night" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:{{ heroPos }};transform:{{ heroScale }};transform-origin:70% 55%;transition:{{ heroTrans }}">
+    </sc-if>
+    <div style="position:absolute;z-index:2;right:clamp(20px,5vw,64px);top:{{ heroCtlTop }};bottom:{{ heroCtlBottom }};display:flex;gap:8px">
+      <sc-if value="{{ showMotionBtn }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ toggleMotion }}" aria-label="{{ motionAria }}" style="min-height:44px;padding:0 16px;background:rgba(11,11,12,.55);border:1px solid #8A8A87;cursor:pointer;color:#EDEDEB;font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase">{{ motionLabel }}</button>
+      </sc-if>
+      <button onClick="{{ toggleSound }}" aria-pressed="{{ soundPressed }}" style="min-height:44px;padding:0 16px;background:rgba(11,11,12,.55);border:1px solid #8A8A87;cursor:pointer;color:#EDEDEB;font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase">{{ soundLabel }}</button>
+    </div>
+    <div style="position:relative;width:100%;max-width:1440px;margin:0 auto;padding:120px clamp(20px,5vw,64px) clamp(32px,7vh,80px);display:flex;flex-direction:column;justify-content:flex-end;min-height:max(100svh,640px)">
+      <div style="max-width:min(560px,42vw);min-width:min(100%,320px);display:flex;flex-direction:column;gap:28px;opacity:{{ heroOpacity }};transform:{{ heroLift }};transition:opacity 1.4s ease,transform 1.4s ease">
+        <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline"><span style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#B4B4B1">Park City, Utah</span><span style="font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87">40.65°N 111.50°W · {{ pcTime }} MT</span></div>
+        <h1 style="margin:0;font:300 clamp(52px,5.6vw,96px)/.98 'Cormorant Garamond',serif;color:#EDEDEB;text-wrap:balance">Composed in the mountains. <em style="font-style:italic;color:#CFD3D8">Worn in the city.</em></h1>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <a href="#/range" onClick="{{ goRange }}" style="display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 28px;background:#AEB4BB;color:#0B0B0C;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;transition:background .3s" style-hover="background:#CFD3D8;color:#0B0B0C">The Postings</a>
+          <a href="#/p/dossier" onClick="{{ goDossier }}" style="display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 28px;border:1px solid #8A8A87;color:#EDEDEB;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;transition:border-color .3s" style-hover="border-color:#EDEDEB;color:#EDEDEB">Begin with the Dossier</a>
+        </div>
+        <a href="{{ heroLive.href }}" onClick="{{ heroLive.go }}" aria-label="{{ heroLive.aria }}" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;clip-path:{{ typeClip }};transition:clip-path 600ms steps(24,end) .5s;color:#EDEDEB">
+          <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em">
+            <span style="color:#8A8A87">YOUR HOUR · {{ heroLive.hour }}</span>
+            <span style="color:#EDEDEB">{{ heroLive.name }}</span>
+            <span style="color:#AEB4BB">{{ heroLive.coords }}</span>
+          </div>
+          <div style="height:1px;background:#AEB4BB"></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Home · Postings" style="padding:clamp(80px,11vw,152px) clamp(20px,5vw,64px)">
+    <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(40px,6vw,72px)">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:640px">
+          <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">The Postings</div>
+          <h2 style="margin:0;font:300 clamp(40px,5vw,72px)/1 'Cormorant Garamond',serif;color:#EDEDEB">Two mountains. <em style="color:#CFD3D8">Two streets.</em></h2>
+        </div>
+        <p style="margin:0;max-width:360px;font:300 16px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">Four Eaux de Parfum. One place, one hour, one material. Together they cover the day.</p>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="position:relative;height:56px">
+        <div style="position:absolute;left:0;right:0;top:28px;height:1px;background:#2A2A2D"></div>
+        <div aria-hidden="true" style="position:absolute;top:18px;height:21px;width:1px;left:{{ hourLeft }};background:#AEB4BB;transition:left .2s ease"></div>
+        <sc-for list="{{ railTicks }}" as="t" hint-placeholder-count="5">
+          <div style="position:absolute;top:24px;left:{{ t.left }};transform:translateX({{ t.shift }});display:flex;flex-direction:column;align-items:center;gap:8px">
+            <div style="width:1px;height:9px;background:#2A2A2D"></div>
+            <div style="font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#8A8A87">{{ t.label }}</div>
+          </div>
+        </sc-for>
+        <sc-for list="{{ homePostings }}" as="p" hint-placeholder-count="4">
+          <div onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ clearHover }}" onClick="{{ p.go }}" style="position:absolute;top:0;left:{{ p.railLeft }};transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer">
+            <div style="font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:{{ p.railColor }};transition:color .3s;white-space:nowrap">{{ p.railLabel }}</div>
+            <div style="width:7px;height:7px;margin-top:7px;background:{{ p.railColor }};transition:background .3s"></div>
+          </div>
+        </sc-for>
+      </div>
+      <input type="range" min="0" max="24" step="1" value="{{ findHour }}" onChange="{{ onHour }}" aria-label="Find your hour" aria-valuetext="{{ hourText }}" style="width:100%;height:32px;margin:0;accent-color:#AEB4BB;cursor:pointer">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:12px 32px">
+        <div style="display:flex;align-items:baseline;gap:16px">
+          <span style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">Find your hour</span>
+          <span style="font:400 13px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#EDEDEB">{{ hourText }}</span>
+        </div>
+        <a href="{{ hourPick.href }}" onClick="{{ hourPick.go }}" style="display:flex;align-items:baseline;gap:14px;min-height:44px;color:#EDEDEB">
+          <span style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87">POSTING {{ hourPick.num }}</span>
+          <span style="font:300 26px/1 'Cormorant Garamond',serif;letter-spacing:.08em">{{ hourPick.name }}</span>
+          <em style="font:300 italic 22px/1 'Cormorant Garamond',serif;color:#CFD3D8">{{ hourPick.line }}</em>
+        </a>
+      </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:clamp(24px,3vw,40px) clamp(16px,2vw,28px)">
+        <sc-for list="{{ homePostings }}" as="p" hint-placeholder-count="4">
+          <a href="{{ p.href }}" onClick="{{ p.go }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ clearHover }}" style="display:flex;flex-direction:column;gap:18px;color:#EDEDEB">
+            <div style="aspect-ratio:4/5;background:#161618;overflow:hidden">
+              <img loading="lazy" decoding="async" src="{{ p.img }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;display:block;transform:{{ p.zoom }};transition:transform 1.4s cubic-bezier(.2,.7,.2,1)">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87">
+                <span>{{ p.num }} · {{ p.hour }} · {{ p.kindTag }}</span>
+                <span style="width:10px;height:10px;background:{{ p.color }}"></span>
+              </div>
+              <div style="font:300 32px/1 'Cormorant Garamond',serif;letter-spacing:.08em;text-transform:uppercase;color:#EDEDEB">{{ p.name }}</div>
+              <div style="font:300 15px/1.6 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ p.line }}</div>
+              <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#EDEDEB;margin-top:4px">{{ p.fromPrice }}</div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Home · Range" style="background:#161618;padding:clamp(80px,11vw,152px) clamp(20px,5vw,64px)">
+    <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(40px,6vw,72px)">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:720px">
+          <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">The Range</div>
+          <h2 style="margin:0;font:300 clamp(40px,5vw,72px)/1 'Cormorant Garamond',serif;color:#EDEDEB">Discover. Wear. Carry. <em style="color:#CFD3D8">Keep.</em></h2>
+        </div>
+        <a href="#/range" onClick="{{ goRange }}" style="align-self:flex-start;display:inline-flex;align-items:center;height:52px;padding:0 28px;border:1px solid #8A8A87;color:#EDEDEB;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;transition:border-color .3s" style-hover="border-color:#EDEDEB;color:#EDEDEB">The full range</a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:clamp(24px,3vw,40px) clamp(16px,2vw,28px)">
+        <sc-for list="{{ rangeItems }}" as="r" hint-placeholder-count="4">
+          <a href="{{ r.href }}" onClick="{{ r.go }}" style="display:flex;flex-direction:column;gap:18px;color:#EDEDEB">
+            <div style="position:relative;aspect-ratio:1/1;background:#161618;overflow:hidden">
+              <img loading="lazy" decoding="async" src="{{ r.img }}" alt="{{ r.name }}" style="width:100%;height:100%;object-fit:cover;display:block">
+              <sc-if value="{{ r.preparing }}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute;left:12px;top:12px;padding:7px 10px;background:#0B0B0C;font:500 10px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#B4B4B1">In preparation</span>
+              </sc-if>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87">{{ r.tag }}</div>
+              <div style="font:300 28px/1 'Cormorant Garamond',serif;letter-spacing:.08em;text-transform:uppercase;color:#EDEDEB">{{ r.name }}</div>
+              <div style="font:300 15px/1.6 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ r.desc }}</div>
+              <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#EDEDEB;margin-top:4px">{{ r.priceText }}</div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Home · Proof" style="padding:clamp(80px,11vw,152px) clamp(20px,5vw,64px)">
+    <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(40px,5vw,64px)">
+      <h2 style="margin:0;max-width:720px;font:300 clamp(40px,5vw,72px)/1 'Cormorant Garamond',serif;color:#EDEDEB">Honest about <em style="color:#CFD3D8">the source.</em></h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:40px 32px">
+        <sc-for list="{{ proofs }}" as="pr" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:14px;padding-top:20px;border-top:1px solid #2A2A2D">
+            <div style="font:500 11px/1.4 'Hanken Grotesk',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#EDEDEB">{{ pr.k }}</div>
+            <div style="font:300 15px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ pr.v }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Home · Field Care" style="border-top:1px solid #2A2A2D;padding:clamp(80px,11vw,152px) clamp(20px,5vw,64px)">
+    <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(40px,5vw,64px)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:24px clamp(40px,6vw,96px);align-items:end">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">Field Care</div>
+          <h2 style="margin:0;font:300 clamp(40px,4.4vw,64px)/1 'Cormorant Garamond',serif;color:#EDEDEB">The kit <em style="color:#CFD3D8">behind the scent.</em></h2>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;max-width:460px">
+          <p style="margin:0;font:300 17px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1;text-wrap:pretty">Ten everyday essentials for shave, hair, skin and body, each scented with one of the four postings so it layers with the fragrance.</p>
+          <a href="#/field-care" onClick="{{ goCare }}" style="align-self:flex-start;display:inline-flex;align-items:center;height:52px;padding:0 28px;border:1px solid #8A8A87;color:#EDEDEB;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;transition:border-color .3s" style-hover="border-color:#EDEDEB;color:#EDEDEB">See Field Care</a>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:clamp(12px,1.6vw,20px)">
+        <sc-for list="{{ homeCare }}" as="c" hint-placeholder-count="4">
+          <a href="{{ c.href }}" onClick="{{ c.go }}" style="display:flex;flex-direction:column;gap:14px;color:#EDEDEB">
+            <div style="aspect-ratio:4/5;overflow:hidden;background:#161618"><img loading="lazy" decoding="async" src="{{ c.img }}" alt="{{ c.name }}" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;font:400 12px/1.3 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#B4B4B1;text-transform:uppercase">
+              <span>{{ c.code }} · {{ c.name }}</span>
+              <span style="flex:none;width:8px;height:8px;background:{{ c.scentColor }}"></span>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Home · Close" style="position:relative;min-height:clamp(560px,56vw,880px);overflow:hidden;background:#0B0B0C">
+    <img loading="lazy" decoding="async" src="assets/merowen_brand_wearers_v09.jpg" alt="Two wearers walking a ridgeline above Park City at dusk" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 70%;display:block">
+    <div style="position:relative;max-width:1440px;margin:0 auto;padding:clamp(48px,7vw,104px) clamp(20px,5vw,64px)">
+      <h2 style="margin:0;max-width:620px;font:300 clamp(44px,6vw,88px)/1 'Cormorant Garamond',serif;color:#EDEDEB;text-wrap:balance">Leave a trace, <em style="color:#CFD3D8">not a trail.</em></h2>
+    </div>
+  </section>
+
+  <section data-screen-label="Home · Inner Circle" style="padding:clamp(80px,10vw,144px) clamp(20px,5vw,64px)">
+    <div style="max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:32px clamp(40px,6vw,96px);align-items:end">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">The Inner Circle</div>
+        <h2 style="margin:0;font:300 clamp(40px,4.4vw,64px)/1 'Cormorant Garamond',serif;color:#EDEDEB">First word, <em style="color:#CFD3D8">before the shelf.</em></h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:24px;max-width:480px">
+        <p style="margin:0;font:300 17px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">New postings, numbered Extrait batches and refill reminders. Sent rarely.</p>
+        <form onSubmit="{{ onSubscribe }}" style="display:flex;border-bottom:1px solid #8A8A87">
+          <input type="email" required="" placeholder="Email address" aria-label="Email address" style="flex:1;min-width:0;height:52px;background:transparent;border:0;outline:none;color:#EDEDEB;font:300 16px 'Hanken Grotesk',sans-serif">
+          <button type="submit" style="min-height:52px;background:none;border:0;cursor:pointer;color:#AEB4BB;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase">Join</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<sc-if value="{{ isRange }}" hint-placeholder-val="{{ false }}">
+<main data-screen-label="The Range" style="padding:clamp(48px,7vw,96px) clamp(20px,5vw,64px) clamp(80px,10vw,144px)">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(56px,8vw,112px)">
+    <div style="display:flex;flex-direction:column;gap:20px;max-width:720px">
+      <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">The Range</div>
+      <h1 style="margin:0;font:300 clamp(52px,6.6vw,96px)/.98 'Cormorant Garamond',serif;color:#EDEDEB">One place, <em style="color:#CFD3D8">one hour,</em> one material.</h1>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:32px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-bottom:16px;border-bottom:1px solid #2A2A2D">
+        <h2 style="margin:0;font:400 30px/1 'Cormorant Garamond',serif;color:#EDEDEB">The Postings</h2>
+        <span style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#8A8A87">EAU DE PARFUM · 50 / 100 ML</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:clamp(24px,3vw,40px) clamp(16px,2vw,28px)">
+        <sc-for list="{{ postingsByNum }}" as="p" hint-placeholder-count="4">
+          <a href="{{ p.href }}" onClick="{{ p.go }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ clearHover }}" style="display:flex;flex-direction:column;gap:18px;color:#EDEDEB">
+            <div style="aspect-ratio:4/5;background:#161618;overflow:hidden">
+              <img loading="lazy" decoding="async" src="{{ p.img }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;display:block;transform:{{ p.zoom }};transition:transform 1.4s cubic-bezier(.2,.7,.2,1)">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87">
+                <span>{{ p.num }} · {{ p.hour }} · {{ p.kindTag }}</span>
+                <span style="width:10px;height:10px;background:{{ p.color }}"></span>
+              </div>
+              <div style="font:300 32px/1 'Cormorant Garamond',serif;letter-spacing:.08em;text-transform:uppercase;color:#EDEDEB">{{ p.name }}</div>
+              <div style="font:300 15px/1.6 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ p.line }}</div>
+              <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#EDEDEB;margin-top:4px">{{ p.fromPrice }}</div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:32px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-bottom:16px;border-bottom:1px solid #2A2A2D">
+        <h2 style="margin:0;font:400 30px/1 'Cormorant Garamond',serif;color:#EDEDEB">Discover. Wear. Carry. Keep.</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:clamp(24px,3vw,40px) clamp(16px,2vw,28px)">
+        <sc-for list="{{ rangeItems }}" as="r" hint-placeholder-count="4">
+          <a href="{{ r.href }}" onClick="{{ r.go }}" style="display:flex;flex-direction:column;gap:18px;color:#EDEDEB">
+            <div style="position:relative;aspect-ratio:1/1;background:#161618;overflow:hidden">
+              <img loading="lazy" decoding="async" src="{{ r.img }}" alt="{{ r.name }}" style="width:100%;height:100%;object-fit:cover;display:block">
+              <sc-if value="{{ r.preparing }}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute;left:12px;top:12px;padding:7px 10px;background:#0B0B0C;font:500 10px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#B4B4B1">In preparation</span>
+              </sc-if>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87;text-transform:uppercase">{{ r.format }}</div>
+              <div style="font:300 28px/1 'Cormorant Garamond',serif;letter-spacing:.08em;text-transform:uppercase;color:#EDEDEB">{{ r.name }}</div>
+              <div style="font:300 15px/1.6 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ r.line }}</div>
+              <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#EDEDEB;margin-top:4px">{{ r.priceText }}</div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+
+    <a href="#/field-care" onClick="{{ goCare }}" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px;align-items:center;padding:clamp(24px,4vw,48px);background:#161618;color:#EDEDEB">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">FC/01 – FC/10</div>
+        <div style="font:300 clamp(36px,4vw,56px)/1 'Cormorant Garamond',serif">Field Care</div>
+        <div style="font:300 15px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1;max-width:400px">Ten everyday essentials for shave, hair, skin and body, each scented with one of the four postings.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+        <sc-for list="{{ careTeaser }}" as="c" hint-placeholder-count="3">
+          <div style="aspect-ratio:4/5;overflow:hidden;background:#0B0B0C"><img loading="lazy" decoding="async" src="{{ c.img }}" alt="{{ c.name }}" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+        </sc-for>
+      </div>
+    </a>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ isCare }}" hint-placeholder-val="{{ false }}">
+<main data-screen-label="Field Care" style="padding:clamp(48px,7vw,96px) clamp(20px,5vw,64px) clamp(80px,10vw,144px)">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(40px,6vw,72px)">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:720px">
+        <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">Field Care</div>
+        <h1 style="margin:0;font:300 clamp(52px,6.6vw,96px)/.98 'Cormorant Garamond',serif;color:#EDEDEB">The kit <em style="color:#CFD3D8">behind the scent.</em></h1>
+      </div>
+      <p style="margin:0;max-width:400px;font:300 16px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">Ten everyday essentials for shave, hair, skin and body, each scented with one of the four postings so it layers with the fragrance.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid #2A2A2D;padding-bottom:20px">
+      <sc-for list="{{ careSteps }}" as="s" hint-placeholder-count="5">
+        <button onClick="{{ s.onClick }}" style="min-height:44px;padding:0 20px;background:{{ s.bg }};color:{{ s.color }};border:1px solid {{ s.border }};cursor:pointer;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;transition:all .25s">{{ s.label }}</button>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:clamp(28px,3vw,44px) clamp(16px,2vw,28px)">
+      <sc-for list="{{ careList }}" as="c" hint-placeholder-count="9">
+        <a href="{{ c.href }}" onClick="{{ c.go }}" style="display:flex;flex-direction:column;gap:16px;color:#EDEDEB">
+          <div style="aspect-ratio:4/5;background:#161618;overflow:hidden;display:flex;align-items:center;justify-content:center">
+            <sc-if value="{{ c.hasImg }}" hint-placeholder-val="{{ true }}">
+              <img loading="lazy" decoding="async" src="{{ c.img }}" alt="{{ c.name }}" style="width:100%;height:100%;object-fit:cover;display:block">
+            </sc-if>
+            <sc-if value="{{ c.noImg }}" hint-placeholder-val="{{ false }}">
+              <div style="font:400 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#8A8A87;text-align:center;padding:16px">image to come</div>
+            </sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="display:flex;justify-content:space-between;align-items:center;font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87">
+              <span>{{ c.code }}</span>
+              <span style="display:flex;align-items:center;gap:8px">{{ c.scentName }}<span style="width:8px;height:8px;background:{{ c.scentColor }}"></span></span>
+            </div>
+            <div style="font:300 26px/1.05 'Cormorant Garamond',serif;letter-spacing:.06em;text-transform:uppercase">{{ c.name }}</div>
+            <div style="font:300 15px/1.6 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ c.line }}</div>
+            <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;margin-top:4px">{{ c.size }} — {{ c.priceText }}</div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:32px clamp(40px,6vw,96px);align-items:center;margin-top:clamp(32px,5vw,64px)">
+      <div style="aspect-ratio:16/9;overflow:hidden;background:#161618"><img loading="lazy" decoding="async" src="assets/merowen_care_ritual_v05.jpg" alt="Lathering shave cream in a stone bowl" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:440px">
+        <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">The morning shave</div>
+        <h2 style="margin:0;font:300 clamp(36px,4vw,56px)/1 'Cormorant Garamond',serif;color:#EDEDEB">A close shave <em style="color:#CFD3D8">before first light.</em></h2>
+        <p style="margin:0;font:300 16px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">Shave Cream in Guardsman, Aftershave Balm in Blackfriars, Aftershave Tonic in Empire.</p>
+        <button onClick="{{ shopShave }}" style="align-self:flex-start;height:52px;padding:0 28px;background:transparent;border:1px solid #8A8A87;color:#EDEDEB;cursor:pointer;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase">Shop the shave</button>
+      </div>
+    </div>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ isProduct }}" hint-placeholder-val="{{ false }}">
+<main data-screen-label="Product" style="padding:clamp(24px,4vw,48px) clamp(20px,5vw,64px) clamp(80px,10vw,144px)">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(72px,9vw,128px)">
+    <div style="display:grid;grid-template-columns:{{ prodCols }};gap:clamp(32px,5vw,88px);align-items:start">
+      <div style="position:sticky;top:96px;display:flex;flex-direction:column;gap:12px">
+        <div style="position:relative;aspect-ratio:{{ prod.ratio }};background:#161618;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          <sc-if value="{{ prod.hasFilm }}" hint-placeholder-val="{{ false }}">
+            <video ref="{{ prodVidRef }}" src="{{ prod.film }}" poster="{{ prod.mainImg }}" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;display:block"></video>
+            <button onClick="{{ toggleMotion }}" aria-label="{{ motionAria }}" style="position:absolute;right:12px;bottom:12px;min-height:44px;padding:0 16px;background:rgba(11,11,12,.55);border:1px solid #8A8A87;cursor:pointer;color:#EDEDEB;font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase">{{ motionLabel }}</button>
+          </sc-if>
+          <sc-if value="{{ prod.hasImg }}" hint-placeholder-val="{{ true }}">
+            <img loading="lazy" decoding="async" src="{{ prod.mainImg }}" alt="{{ prod.name }}" style="width:100%;height:100%;object-fit:cover;display:block">
+          </sc-if>
+          <sc-if value="{{ prod.noImg }}" hint-placeholder-val="{{ false }}">
+            <div style="font:400 12px/1.6 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#8A8A87;text-align:center">image to come</div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ prod.hasThumbs }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:10px">
+            <sc-for list="{{ prod.images }}" as="im" hint-placeholder-count="2">
+              <button onClick="{{ im.onClick }}" aria-label="View image" style="width:72px;aspect-ratio:4/5;padding:0;border:1px solid {{ im.border }};background:#161618;cursor:pointer;overflow:hidden">
+                <img loading="lazy" decoding="async" src="{{ im.src }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:32px;max-width:560px">
+        <a href="{{ prod.crumbHref }}" onClick="{{ prod.crumbGo }}" style="display:flex;align-items:center;min-height:44px;margin:-8px 0 -16px;font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87">← {{ prod.crumb }}</a>
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">{{ prod.eyebrow }}</div>
+          <h1 style="margin:0;font:300 clamp(52px,6vw,88px)/.96 'Cormorant Garamond',serif;letter-spacing:.08em;text-transform:uppercase;color:#EDEDEB;text-wrap:balance">{{ prod.name }}</h1>
+          <div style="font:300 italic clamp(24px,2.4vw,30px)/1.2 'Cormorant Garamond',serif;color:#CFD3D8">{{ prod.line }}</div>
+        </div>
+
+        <sc-if value="{{ prod.isPosting }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px;clip-path:{{ typeClip }};transition:clip-path 600ms steps(24,end) .2s">
+            <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em">
+              <span style="color:#EDEDEB">{{ prod.coordLeft }}</span>
+              <span style="color:#AEB4BB">{{ prod.coordRight }}</span>
+            </div>
+            <div style="height:1px;background:#AEB4BB"></div>
+          </div>
+        </sc-if>
+
+        <p style="margin:0;font:300 17px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1;text-wrap:pretty">{{ prod.desc }}</p>
+
+        <sc-if value="{{ prod.hasSizes }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#8A8A87">{{ prod.optionLabel }}</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px">
+              <sc-for list="{{ prod.options }}" as="o" hint-placeholder-count="2">
+                <button onClick="{{ o.onClick }}" style="min-height:56px;padding:10px 16px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;background:transparent;border:1px solid {{ o.border }};cursor:pointer;text-align:left;transition:border-color .25s">
+                  <span style="font:400 13px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:{{ o.color }}">{{ o.label }}</span>
+                  <span style="font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#8A8A87">{{ o.sub }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div ref="{{ buyRef }}" style="display:flex;flex-direction:column;gap:14px">
+          <sc-if value="{{ prod.canBuy }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ prod.onAdd }}" style="height:56px;width:100%;background:#AEB4BB;color:#0B0B0C;border:0;cursor:pointer;font:500 12px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;transition:background .3s" style-hover="background:#CFD3D8">Add to bag — <span style="font-family:'IBM Plex Mono',monospace;letter-spacing:.08em">{{ prod.priceText }}</span></button>
+          </sc-if>
+          <sc-if value="{{ prod.preparing }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ prod.onNotify }}" style="height:56px;width:100%;background:transparent;color:#EDEDEB;border:1px solid #8A8A87;cursor:pointer;font:500 12px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase">{{ prod.notifyLabel }}</button>
+          </sc-if>
+          <div style="font:300 14px/1.6 'Hanken Grotesk',sans-serif;color:#8A8A87">{{ prod.note }}</div>
+          <sc-if value="{{ prod.hasMore }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ prod.moreHref }}" onClick="{{ prod.moreGo }}" style="align-self:flex-start;display:flex;align-items:center;min-height:44px;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#EDEDEB;border-bottom:1px solid #8A8A87">{{ prod.moreLabel }}</a>
+          </sc-if>
+        </div>
+
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ prod.specs }}" as="s" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:minmax(96px,140px) minmax(0,1fr);gap:16px;padding:16px 0;border-top:1px solid #2A2A2D">
+              <div style="font:500 11px/1.7 'Hanken Grotesk',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#8A8A87">{{ s.k }}</div>
+              <div style="display:flex;align-items:center;gap:10px;font:300 16px/1.6 'Hanken Grotesk',sans-serif;color:#EDEDEB">
+                <sc-if value="{{ s.hasSwatch }}" hint-placeholder-val="{{ false }}"><span style="flex:none;width:12px;height:12px;background:{{ s.swatch }}"></span></sc-if>
+                <span style="font-family:{{ s.font }}">{{ s.v }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;border-bottom:1px solid #2A2A2D">
+          <sc-for list="{{ prod.details }}" as="d" hint-placeholder-count="3">
+            <div style="border-top:1px solid #2A2A2D">
+              <button onClick="{{ d.onToggle }}" style="width:100%;min-height:56px;display:flex;justify-content:space-between;align-items:center;background:none;border:0;padding:0;cursor:pointer;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#EDEDEB">{{ d.title }}<span style="font:400 16px/1 'IBM Plex Mono',monospace;color:#AEB4BB">{{ d.sign }}</span></button>
+              <sc-if value="{{ d.open }}" hint-placeholder-val="{{ false }}">
+                <p style="margin:0 0 20px;font:300 15px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ d.body }}</p>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ prod.hasProv }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:20px;padding:28px 0 0">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px">
+              <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">Provenance</div>
+              <div style="font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#AEB4BB">{{ prod.batch }}</div>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ prod.prov }}" as="r" hint-placeholder-count="4">
+                <div style="display:grid;grid-template-columns:minmax(96px,140px) minmax(0,1fr);gap:16px;padding:14px 0;border-top:1px solid #2A2A2D">
+                  <div style="font:500 11px/1.7 'Hanken Grotesk',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#8A8A87">{{ r.k }}</div>
+                  <div style="font:300 15px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1;text-wrap:pretty">{{ r.v }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <sc-if value="{{ prod.hasLayers }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:32px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-bottom:16px;border-bottom:1px solid #2A2A2D">
+          <h2 style="margin:0;font:400 30px/1 'Cormorant Garamond',serif;color:#EDEDEB">{{ prod.layersTitle }}</h2>
+          <span style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#8A8A87">FIELD CARE</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:24px 20px">
+          <sc-for list="{{ prod.layers }}" as="c" hint-placeholder-count="2">
+            <a href="{{ c.href }}" onClick="{{ c.go }}" style="display:flex;flex-direction:column;gap:14px;color:#EDEDEB">
+              <div style="aspect-ratio:4/5;background:#161618;overflow:hidden;display:flex;align-items:center;justify-content:center">
+                <sc-if value="{{ c.hasImg }}" hint-placeholder-val="{{ true }}"><img loading="lazy" decoding="async" src="{{ c.img }}" alt="{{ c.name }}" style="width:100%;height:100%;object-fit:cover;display:block"></sc-if>
+                <sc-if value="{{ c.noImg }}" hint-placeholder-val="{{ false }}"><div style="font:400 11px/1.6 'IBM Plex Mono',monospace;color:#8A8A87;text-align:center;padding:12px">image to come</div></sc-if>
+              </div>
+              <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87">{{ c.code }}</div>
+              <div style="font:300 24px/1.05 'Cormorant Garamond',serif;letter-spacing:.06em;text-transform:uppercase">{{ c.name }}</div>
+              <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em">{{ c.size }} — {{ c.priceText }}</div>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ prod.hasOthers }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:32px">
+        <div style="padding-bottom:16px;border-bottom:1px solid #2A2A2D">
+          <h2 style="margin:0;font:400 30px/1 'Cormorant Garamond',serif;color:#EDEDEB">The other postings</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:24px 20px">
+          <sc-for list="{{ prod.others }}" as="p" hint-placeholder-count="3">
+            <a href="{{ p.href }}" onClick="{{ p.go }}" style="display:flex;flex-direction:column;gap:14px;color:#EDEDEB">
+              <div style="aspect-ratio:4/5;background:#161618;overflow:hidden"><img loading="lazy" decoding="async" src="{{ p.img }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#8A8A87"><span>{{ p.num }} · {{ p.hour }}</span><span style="width:10px;height:10px;background:{{ p.color }}"></span></div>
+              <div style="font:300 28px/1 'Cormorant Garamond',serif;letter-spacing:.08em;text-transform:uppercase">{{ p.name }}</div>
+              <div style="font:300 15px/1.6 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ p.line }}</div>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
+<main data-screen-label="About">
+  <section style="padding:clamp(48px,7vw,96px) clamp(20px,5vw,64px) clamp(64px,8vw,112px)">
+    <div style="max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(40px,6vw,96px);align-items:center">
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">The House</div>
+        <h1 style="margin:0;font:300 clamp(52px,6.6vw,96px)/.98 'Cormorant Garamond',serif;color:#EDEDEB">From the pass. From the river. <em style="color:#CFD3D8">From the stone.</em></h1>
+        <p style="margin:0;max-width:480px;font:300 17px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1;text-wrap:pretty">Every Merowen bottle is a posting: one place we stand, one hour of the day, one material carried home from it.</p>
+      </div>
+      <div style="aspect-ratio:4/5;overflow:hidden;background:#161618"><img loading="lazy" decoding="async" src="assets/merowen_master_blackfriars_v08.jpg" alt="Blackfriars flacon with frankincense" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+    </div>
+  </section>
+  <section style="background:#161618;padding:clamp(64px,9vw,128px) clamp(20px,5vw,64px)">
+    <div style="max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:clamp(40px,6vw,96px)">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">The name</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="font:400 clamp(40px,4.4vw,56px)/1 'Cormorant Garamond',serif;letter-spacing:.3em;color:#EDEDEB">MEROWEN</div>
+          <div style="font:400 13px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#AEB4BB">MERR-OH-WEN</div>
+        </div>
+      </div>
+      <p style="margin:0;align-self:end;max-width:520px;font:300 18px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1;text-wrap:pretty">We read the name as two halves: <em style="font-family:'Cormorant Garamond',serif;font-size:21px;color:#CFD3D8">mer</em>, the sea, and Owen, the old Welsh name long read as noble or well-born. The elemental, refined.</p>
+    </div>
+  </section>
+  <section style="padding:clamp(72px,10vw,144px) clamp(20px,5vw,64px)">
+    <div style="max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(40px,6vw,96px);align-items:center">
+      <div style="aspect-ratio:1/1;overflow:hidden;background:#161618"><img loading="lazy" decoding="async" src="assets/merowen_box_blackfriars_v08.jpg" alt="The Blackfriars flacon in its presentation box" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">Packaging</div>
+        <h2 style="margin:0;font:300 clamp(40px,4.4vw,64px)/1 'Cormorant Garamond',serif;color:#EDEDEB">Made <em style="color:#CFD3D8">to be kept.</em></h2>
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ packaging }}" as="pk" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:minmax(96px,130px) minmax(0,1fr);gap:16px;padding:16px 0;border-top:1px solid #2A2A2D">
+              <div style="font:500 11px/1.7 'Hanken Grotesk',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#8A8A87">{{ pk.k }}</div>
+              <div style="font:300 15px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ pk.v }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section style="padding:0 clamp(20px,5vw,64px) clamp(72px,10vw,144px)">
+    <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column">
+      <sc-for list="{{ pillars }}" as="pl" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px 48px;padding:28px 0;border-top:1px solid #2A2A2D">
+          <div style="font:500 11px/2 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">{{ pl.k }}</div>
+          <div style="grid-column:span 2;font:300 clamp(24px,2.4vw,30px)/1.3 'Cormorant Garamond',serif;color:#EDEDEB;max-width:760px">{{ pl.v }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<sc-if value="{{ isRefill }}" hint-placeholder-val="{{ false }}">
+<main data-screen-label="Refill Programme">
+  <section style="padding:clamp(48px,7vw,96px) clamp(20px,5vw,64px) clamp(64px,8vw,112px)">
+    <div style="max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(40px,6vw,96px);align-items:center">
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">The Refill Programme</div>
+        <h1 style="margin:0;font:300 clamp(52px,6.6vw,96px)/.98 'Cormorant Garamond',serif;color:#EDEDEB">Kept <em style="color:#CFD3D8">for life.</em></h1>
+        <p style="margin:0;max-width:460px;font:300 17px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1;text-wrap:pretty">Every flacon is made to be refilled. There is a 200 ml flask for every posting, and the empty comes back to us.</p>
+        <a href="#/p/refill" onClick="{{ goRefillProduct }}" style="align-self:flex-start;display:inline-flex;align-items:center;height:52px;padding:0 28px;background:#AEB4BB;color:#0B0B0C;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase" style-hover="background:#CFD3D8;color:#0B0B0C">The Refill — <span style="font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;margin-left:6px">{{ refillPrice }}</span></a>
+      </div>
+      <div style="aspect-ratio:1/1;overflow:hidden;background:#161618"><img loading="lazy" decoding="async" src="assets/merowen_range_refill_v05.jpg" alt="The 200 ml Refill flask" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+    </div>
+  </section>
+  <section style="background:#161618;padding:clamp(64px,9vw,128px) clamp(20px,5vw,64px)">
+    <div style="max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:40px 32px">
+      <sc-for list="{{ refillSteps }}" as="st" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column;gap:16px;padding-top:20px;border-top:1px solid #2A2A2D">
+          <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:#AEB4BB">{{ st.n }}</div>
+          <div style="font:300 30px/1.1 'Cormorant Garamond',serif;color:#EDEDEB">{{ st.k }}</div>
+          <div style="font:300 15px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ st.v }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+  <section style="padding:clamp(64px,9vw,128px) clamp(20px,5vw,64px)">
+    <a href="#/p/deodorant" onClick="{{ goDeodorant }}" style="max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px clamp(40px,6vw,96px);align-items:center;color:#EDEDEB">
+      <div style="aspect-ratio:4/5;max-width:420px;overflow:hidden;background:#161618"><img loading="lazy" decoding="async" src="assets/merowen_care_deodorant_v05.jpg" alt="Deodorant in its blackened-steel case" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="display:flex;flex-direction:column;gap:18px;max-width:440px">
+        <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#8A8A87">Field Care · FC/09</div>
+        <div style="font:300 clamp(36px,4vw,56px)/1 'Cormorant Garamond',serif">The case <em style="color:#CFD3D8">refills too.</em></div>
+        <div style="font:300 16px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">The Deodorant lives in a refillable blackened-steel twist case. Refills come in paper-based tubes.</div>
+        <div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em">CASE {{ deoCase }} · REFILL {{ deoRefill }}</div>
+      </div>
+    </a>
+  </section>
+</main>
+</sc-if>
+
+<footer data-screen-label="Footer" style="border-top:1px solid #2A2A2D;padding:clamp(56px,7vw,96px) clamp(20px,5vw,64px) 32px">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:56px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:40px 32px">
+      <div style="display:flex;flex-direction:column;gap:18px;grid-column:span 2;max-width:420px">
+        <div style="font:400 20px/1 'Cormorant Garamond',serif;letter-spacing:.3em;color:#EDEDEB">MEROWEN</div>
+        <div style="font:300 15px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">Composed in the mountains. Worn in the city.</div>
+        <div style="font:400 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#8A8A87">PARK CITY, UTAH · 40.65°N 111.50°W · EST. 2026</div><div style="font:400 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#8A8A87">LOCAL TIME {{ pcTime }} MT</div>
+        <sc-if value="{{ notHome }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#8A8A87;margin-top:8px">The Inner Circle</div>
+          <form onSubmit="{{ onSubscribe }}" style="display:flex;border-bottom:1px solid #8A8A87">
+          <input type="email" required="" placeholder="Email address" aria-label="Email address" style="flex:1;min-width:0;height:48px;background:transparent;border:0;outline:none;color:#EDEDEB;font:300 15px 'Hanken Grotesk',sans-serif">
+          <button type="submit" style="min-height:48px;background:none;border:0;cursor:pointer;color:#AEB4BB;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase">Subscribe</button>
+        </form>
+        </div>
+        </sc-if>
+      </div>
+      <sc-for list="{{ footerCols }}" as="col" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#8A8A87;margin-bottom:10px">{{ col.title }}</div>
+          <sc-for list="{{ col.links }}" as="l" hint-placeholder-count="4">
+            <a href="{{ l.href }}" onClick="{{ l.go }}" style="display:flex;align-items:center;min-height:36px;font:300 15px/1.4 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ l.label }}</a>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding-top:24px;border-top:1px solid #2A2A2D;font:400 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#8A8A87">
+      <span>© 2026 MEROWEN — PARK CITY, UTAH · 40.6461° N, 111.4980° W</span>
+      <span>CHECKOUT BY SHOPIFY</span>
+    </div>
+  </div>
+</footer>
+
+<sc-if value="{{ showBuyBar }}" hint-placeholder-val="{{ false }}">
+  <div style="height:80px"></div>
+  <div data-screen-label="Buy bar" style="position:fixed;left:0;right:0;bottom:0;z-index:30;background:#0B0B0C;border-top:1px solid #2A2A2D;padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:16px">
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+      <span style="font:300 20px/1 'Cormorant Garamond',serif;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ prod.name }}</span>
+      <span style="font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#8A8A87;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ prod.barSub }}</span>
+    </div>
+    <button onClick="{{ prod.onAdd }}" style="flex:none;height:48px;padding:0 18px;background:#AEB4BB;color:#0B0B0C;border:0;cursor:pointer;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.22em;text-transform:uppercase">Add — <span style="font-family:'IBM Plex Mono',monospace;letter-spacing:.06em">{{ prod.priceText }}</span></button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+  <div ref="{{ menuRef }}" role="dialog" aria-modal="true" aria-label="Menu" style="position:fixed;inset:0;z-index:40;background:#0B0B0C;display:flex;flex-direction:column;padding:0 clamp(16px,4vw,48px) 32px">
+    <div style="height:72px;display:flex;align-items:center;justify-content:space-between">
+      <span style="font:400 19px/1 'Cormorant Garamond',serif;letter-spacing:.3em;color:#EDEDEB">MEROWEN</span>
+      <button onClick="{{ closeMenu }}" style="min-width:44px;min-height:44px;background:none;border:0;cursor:pointer;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#EDEDEB">Close</button>
+    </div>
+    <nav style="display:flex;flex-direction:column;margin-top:32px">
+      <sc-for list="{{ menuLinks }}" as="n" hint-placeholder-count="5">
+        <a href="{{ n.href }}" onClick="{{ n.go }}" style="display:flex;align-items:center;min-height:68px;border-bottom:1px solid #2A2A2D;font:300 36px/1 'Cormorant Garamond',serif;color:#EDEDEB">{{ n.label }}</a>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;gap:12px;font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em"><span style="color:#EDEDEB">MEROWEN — PARK CITY</span><span style="color:#AEB4BB">40.65°N 111.50°W — {{ pcTime }}</span></div>
+      <div style="height:1px;background:#AEB4BB"></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ cartOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeCart }}" style="position:fixed;inset:0;z-index:50;background:rgba(11,11,12,.78)"></div>
+  <aside ref="{{ cartRef }}" role="dialog" aria-modal="true" aria-label="Bag" data-screen-label="Bag" style="position:fixed;top:0;right:0;bottom:0;z-index:51;width:min(460px,100%);background:#0B0B0C;border-left:1px solid #2A2A2D;display:flex;flex-direction:column">
+    <div style="height:72px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid #2A2A2D">
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font:400 26px/1 'Cormorant Garamond',serif">Bag</span><span style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#AEB4BB">{{ cartCount }}</span></div>
+      <button onClick="{{ closeCart }}" style="min-width:44px;min-height:44px;background:none;border:0;cursor:pointer;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#EDEDEB">Close</button>
+    </div>
+    <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:20px;padding:32px 24px">
+        <div style="font:300 36px/1.05 'Cormorant Garamond',serif;color:#EDEDEB">Nothing in the bag <em style="color:#CFD3D8">yet.</em></div>
+        <p style="margin:0;font:300 15px/1.7 'Hanken Grotesk',sans-serif;color:#B4B4B1">Four vials, letterbox-sized. The price is credited toward your first flacon.</p>
+        <button onClick="{{ addDossier }}" style="height:52px;padding:0 28px;background:#AEB4BB;color:#0B0B0C;border:0;cursor:pointer;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase">Add the Dossier — {{ dossierPrice }}</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ cartHasItems }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;overflow:auto;padding:8px 24px">
+        <sc-for list="{{ cartLines }}" as="li" hint-placeholder-count="2">
+          <div style="display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:16px;padding:20px 0;border-bottom:1px solid #2A2A2D">
+            <div style="width:72px;aspect-ratio:4/5;background:#161618;overflow:hidden"><sc-if value="{{ li.hasImg }}" hint-placeholder-val="{{ true }}"><img loading="lazy" decoding="async" src="{{ li.img }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></sc-if></div>
+            <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+              <div style="font:300 22px/1.05 'Cormorant Garamond',serif;letter-spacing:.06em;text-transform:uppercase">{{ li.name }}</div>
+              <div style="font:400 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#8A8A87">{{ li.variant }}</div>
+              <div style="display:flex;align-items:center;gap:4px;margin-top:4px">
+                <button onClick="{{ li.dec }}" aria-label="Decrease" style="width:36px;height:36px;background:none;border:1px solid #2A2A2D;cursor:pointer;color:#EDEDEB;font:400 14px 'IBM Plex Mono',monospace">−</button>
+                <span style="min-width:32px;text-align:center;font:400 13px/1 'IBM Plex Mono',monospace">{{ li.qty }}</span>
+                <button onClick="{{ li.inc }}" aria-label="Increase" style="width:36px;height:36px;background:none;border:1px solid #2A2A2D;cursor:pointer;color:#EDEDEB;font:400 14px 'IBM Plex Mono',monospace">+</button>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between">
+              <span style="font:400 13px/1 'IBM Plex Mono',monospace;letter-spacing:.06em">{{ li.total }}</span>
+              <button onClick="{{ li.remove }}" style="min-height:36px;background:none;border:0;padding:0;cursor:pointer;font:400 13px 'Hanken Grotesk',sans-serif;color:#8A8A87;text-decoration:underline;text-underline-offset:3px">Remove</button>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ hasDossierCredit }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:20px;padding:16px;background:#161618;font:300 14px/1.6 'Hanken Grotesk',sans-serif;color:#B4B4B1">Your Dossier arrives with a single-use code worth <span style="font-family:'IBM Plex Mono',monospace;color:#EDEDEB">{{ dossierPrice }}</span> toward a 50 or 100 ml Posting.</div>
+        </sc-if>
+      </div>
+      <div style="flex:none;padding:20px 24px 28px;border-top:1px solid #2A2A2D;display:flex;flex-direction:column;gap:14px">
+        <sc-if value="{{ codeEmpty }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ applyCode }}" style="display:flex;border-bottom:1px solid #8A8A87">
+            <input name="code" autocomplete="off" placeholder="Dossier code" aria-label="Dossier code" style="flex:1;min-width:0;height:48px;background:transparent;border:0;outline:none;color:#EDEDEB;font:400 13px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase">
+            <button type="submit" style="min-height:48px;background:none;border:0;cursor:pointer;color:#AEB4BB;font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase">Apply</button>
+          </form>
+        </sc-if>
+        <sc-if value="{{ codeSet }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+              <span style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#B4B4B1">Dossier credit</span>
+              <span style="font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#8A8A87">{{ code }} · <button onClick="{{ removeCode }}" style="background:none;border:0;padding:0;min-height:24px;cursor:pointer;color:#8A8A87;font:inherit;text-decoration:underline;text-underline-offset:3px">REMOVE</button></span>
+            </div>
+            <span style="font:400 14px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:{{ creditColor }}">{{ creditText }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ hasCodeMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="font:300 13px/1.6 'Hanken Grotesk',sans-serif;color:#B4B4B1">{{ codeMsg }}</div>
+        </sc-if>
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font:500 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#B4B4B1">Subtotal</span>
+          <span style="font:400 16px/1 'IBM Plex Mono',monospace;letter-spacing:.06em">{{ subtotal }}</span>
+        </div>
+        <button onClick="{{ onCheckout }}" style="height:56px;width:100%;background:#AEB4BB;color:#0B0B0C;border:0;cursor:pointer;font:500 12px/1 'Hanken Grotesk',sans-serif;letter-spacing:.26em;text-transform:uppercase;transition:background .3s" style-hover="background:#CFD3D8">Checkout</button>
+        <div style="font:300 13px/1.6 'Hanken Grotesk',sans-serif;color:#8A8A87">Shipping and tax are calculated at checkout. Payment is taken by Shopify.</div>
+      </div>
+    </sc-if>
+  </aside>
+</sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:{{ toastBottom }};transform:translateX(-50%);z-index:60;max-width:calc(100% - 32px);padding:14px 20px;background:#161618;border:1px solid #2A2A2D;font:400 12px/1.5 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#EDEDEB">{{ toast }}</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Home&quot;},&quot;homeOrder&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;hour&quot;,&quot;number&quot;],&quot;default&quot;:&quot;hour&quot;,&quot;tsType&quot;:&quot;'hour'|'number'&quot;,&quot;section&quot;:&quot;Home&quot;},&quot;heroFilm&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Home&quot;},&quot;heroAudio&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Home&quot;},&quot;placeholderPrices&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Commerce&quot;}}">
+class Component extends DCLogic {
+  static POSTINGS = [
+    { handle:'blackfriars', film:'films/merowen_film_blackfriars_v09.mp4', desc:'Incense smoke over wet stone after dark, where the river meets the old city. Resinous, composed and slow to leave.', num:'01', name:'BLACKFRIARS', h:23, hour:'23:00', coords:'51.51°N 0.10°W', material:'Frankincense, composed for Blackfriars', kind:'city', place:'Blackfriars, London', origin:'Dhofar, Oman', line:'The night envoy.', family:'Resinous Smoke', top:'Pink pepper, elemi, rain on stone', heart:'Frankincense, oud accord', base:'Labdanum, birch tar, ambergris accord', color:'#5E4636', extra:[] },
+    { handle:'guardsman', film:'films/merowen_film_guardsman_v09.mp4', desc:'Cold air at the top of the pass and sun-warmed cedar. Clean, upright and awake before everyone else.', num:'02', name:'GUARDSMAN', h:6, hour:'06:00', coords:'40.61°N 111.55°W', material:'Cedar and fir, from Guardsman Pass', kind:'mountain', place:'Guardsman Pass, Utah', origin:'The Wasatch, Utah', line:'The early riser.', family:'Woody Aromatic', top:'Juniper berry, cypress, cold air accord', heart:'Cedar, fir balsam, clary sage', base:'Oakmoss, ambrette, white musk', color:'#6F6553', extra:[] },
+    { handle:'mayfair', film:'films/merowen_film_mayfair_v09.mp4', desc:'Rooted, green and precise. Vetiver sharpened with bergamot and settled into cured tobacco and old leather.', num:'03', name:'MAYFAIR', h:17, hour:'17:00', coords:'51.51°N 0.15°W', material:'Vetiver and tobacco, composed for Mayfair', kind:'city', place:'Mayfair, London', origin:'Haiti; Virginia', line:'The quiet operator.', family:'Green Earth', top:'Bergamot, grapefruit peel', heart:'Vetiver, black tea', base:'Tobacco leaf, leather accord, sandalwood', color:'#46483F', extra:[] },
+    { handle:'empire', film:'films/merowen_film_empire_v09.mp4', desc:'Juniper smoke over cold silver-mine stone at dusk. Bracing and mineral, with warmth underneath.', num:'04', name:'EMPIRE', h:20, hour:'20:00', coords:'40.60°N 111.52°W', material:'Juniper and smoke, from Empire Canyon', kind:'mountain', place:'Empire Canyon, Utah', origin:'The Wasatch, Utah', line:'The last run.', family:'Mineral Smoke', top:'Cold air accord, juniper berry', heart:'Mountain sage, iris, wood smoke accord', base:'Silver fir, ambrette, mineral musk', color:'#5A646A', extra:[] }
+  ];
+  static SIZES = [{ ml:'50 ml', price:195 }, { ml:'100 ml', price:285 }];
+  static PROV = {"blackfriars":{"source":"Boswellia sacra resin, hand-tapped and distilled in Dhofar. Composed for the hour the churches along the river fall quiet.","producer":"Named on the batch card inside every box."},"guardsman":{"source":"Rocky Mountain juniper and subalpine fir from the Wasatch, with Atlas cedar heartwood. Composed at 9,700 ft on Guardsman Pass.","producer":"Named on the batch card inside every box."},"mayfair":{"source":"Vetiveria zizanioides roots, 18-month harvest, Haiti, with cured Virginia tobacco leaf. Composed for a Mayfair tailor's back room at five.","producer":"Named on the batch card inside every box."},"empire":{"source":"Juniper berry, mountain sage and silver fir from Empire Canyon, Park City, with a wood-smoke accord.","producer":"Named on the batch card inside every box."}};
+  static RANGE = [
+    { handle:'dossier', name:'The Dossier', role:'Discover', format:'4 × 2 ml', price:38, img:'assets/merowen_range_dossier_v05.jpg', line:'Four places. Two millilitres each.', desc:'All four postings sealed in a linen envelope with a blackened-steel seal. Its price is credited toward your first flacon.' },
+    { handle:'extrait', name:'Blackfriars Extrait', role:'Wear', format:'30 ml, numbered', price:340, img:'assets/merowen_range_extrait_v05.jpg', line:'The night envoy, at closer range.', desc:'Posting 01 at higher concentration, released in hand-numbered batches.', preparing:true },
+    { handle:'fieldkit', name:'The Field Kit', role:'Carry', format:'45 mm steel compact', price:95, img:'assets/merowen_range_fieldkit_v05.jpg', line:'A posting you can carry.', desc:'Your posting as a solid balm in a knurled blackened-steel compact. Lives in a jacket pocket; the pan refills.', preparing:true },
+    { handle:'refill', name:'The Refill', role:'Keep', format:'200 ml flask', price:395, img:'assets/merowen_range_refill_v05.jpg', line:'Kept for life.', desc:'A heavy refill flask, so your flacon is kept for life rather than thrown away.', options:true }
+  ];
+  static CARE = [
+    { handle:'shave-cream', code:'FC/01', name:'Shave Cream', step:'Shave', scent:'guardsman', size:'150 ml', keys:'Shea butter, glycerin, aloe vera, cedarwood oil, fir balsam', vessel:'Matte black aluminium tube, blackened-steel cap', line:'A close shave before first light.', price:48, img:'shavecream', note:'Lathers thick from a little, lifts the hair and holds water on the skin, so the blade does less work. Cedar and fir in the steam.' },
+    { handle:'aftershave-balm', code:'FC/02', name:'Aftershave Balm', step:'Shave', scent:'blackfriars', size:'75 ml', keys:'Frankincense oil, squalane, oat extract, panthenol', vessel:'Obsidian glass bottle, blackened-steel pump', line:'Calm after the blade.', price:62, img:'balm', note:'Takes the heat out of a shave and leaves no film. Frankincense, squalane and oat, in a balm that disappears in a minute.' },
+    { handle:'aftershave-tonic', code:'FC/03', name:'Aftershave Tonic', step:'Shave', scent:'empire', size:'100 ml', keys:'Witch hazel, juniper extract, allantoin, mountain sage', vessel:'Heavy clear glass flacon, blackened-steel screw cap', line:'Cold water off the pass.', price:58, img:'tonic', note:'Cold on the skin, then gone. Witch hazel and juniper close the pores and settle the sting; sage and wood smoke stay faintly behind.' },
+    { handle:'shampoo', code:'FC/04', name:'Shampoo', step:'Hair', scent:'empire', size:'250 ml', keys:'Birch sap, coconut-derived cleansers, panthenol, rosemary oil', vessel:'Obsidian glass bottle, blackened-steel pump', line:'Mountain air, bottled.', price:44, img:'shampoo', note:'Cleans without stripping. Birch sap and rosemary leave hair with weight and the smell of cold air.' },
+    { handle:'conditioner', code:'FC/05', name:'Conditioner', step:'Hair', scent:'empire', size:'250 ml', keys:'Fir needle extract, hydrolysed oat protein, shea butter, argan oil', vessel:'Obsidian glass bottle, blackened-steel pump', line:'Weight where it belongs.', price:44, img:'conditioner', note:'Oat protein and argan put back what the wind takes out. Hair that moves and doesn\'t need help in the morning.' },
+    { handle:'basalt-face-wash', code:'FC/06', name:'Basalt Face Wash', step:'Skin', scent:'guardsman', size:'100 ml', keys:'Volcanic clay, activated charcoal, glycerin, cedarwood oil', vessel:'Matte black aluminium tube, blackened-steel cap', line:'Clean as wet stone.', price:42, img:'facewash', note:'Volcanic clay and charcoal pull the day off your face. Rinses clean, no squeak, a trace of cedar.' },
+    { handle:'daily-moisturiser', code:'FC/07', name:'Daily Moisturiser', step:'Skin', scent:'mayfair', size:'50 ml', keys:'Niacinamide, hyaluronic acid, squalane, vetiver oil', vessel:'Obsidian glass jar, blackened-steel lid', line:'Rooted, all day.', price:68, img:'moisturiser', note:'Niacinamide and hyaluronic acid under squalane. Dry in seconds, matte by the time you\'ve found your coat. Vetiver, faint.' },
+    { handle:'night-oil', code:'FC/08', name:'Night Oil', step:'Skin', scent:'blackfriars', size:'30 ml', keys:'Frankincense oil, squalane, rosehip oil, vitamin E', vessel:'Obsidian glass dropper, blackened-steel collar', line:'Works while the city sleeps.', price:85, img:'nightoil', note:'Four drops, pressed in. Frankincense, rosehip and squalane work while you sleep and are gone by the alarm.' },
+    { handle:'deodorant', code:'FC/09', name:'Deodorant', step:'Body', scent:'mayfair', size:'75 g, refillable', keys:'Magnesium hydroxide, arrowroot powder, shea butter, vetiver oil', vessel:'Refillable blackened-steel twist case, paper-based refill tubes', line:'Nothing to report.', price:58, img:'deodorant', note:'Magnesium and arrowroot keep you dry; vetiver keeps you quiet. Aluminium-free, in a steel case you\'ll never throw away.', variants:[{ label:'CASE', price:58 }, { label:'REFILL', price:22 }] },
+    { handle:'peptide-cream', code:'FC/10', name:'Peptide Cream', step:'Skin', scent:'empire', size:'50 ml', keys:'Signal peptides, copper tripeptide, hydrolysed silk protein, ceramides, squalane', vessel:'Chamfered obsidian glass jar, blackened-steel lid', line:'Morning and night. Firm ground.', price:120, img:'peptide', note:'Morning and night, a pea\'s worth. Signal peptides and copper tripeptide for firmer-looking skin; silk protein and ceramides to hold the line. Empire, or nothing.' }
+  ];
+
+  state = { route: this.parse(), w: typeof window !== 'undefined' ? window.innerWidth : 1440, cart: this.loadCart(), cartOpen:false, menuOpen:false, opt:{}, img:0, open:{}, hover:null, heroIn:false, careStep:'All', toast:null, scrolled:false, hour: new Date().getHours(), paused:false, frozen:null, sound:false, buyVisible:true, code:null, codeErr:null };
+
+  parse() {
+    const parts = (location.hash || '').replace(/^#\/?/, '').split('/');
+    return { page: parts[0] || 'home', handle: parts[1] || null };
+  }
+  loadCart() { try { return JSON.parse(sessionStorage.getItem('merowen_cart') || '[]'); } catch (e) { return []; } }
+  saveCart(cart) { try { sessionStorage.setItem('merowen_cart', JSON.stringify(cart)); } catch (e) {} }
+
+  // Local preview only: the project server ignores Range requests, so stream-from-URL fails. Load whole file into a Blob.
+  filmSrc(url) {
+    if (!url) return null;
+    if (/^(https?:|blob:)/.test(url)) return (this.state.filmFail || {})[url] ? null : url;
+    const m = this.state.films || {};
+    if (m[url]) return m[url] === 'fail' ? null : m[url];
+    if (!this._filmLoading) this._filmLoading = {};
+    if (!this._filmLoading[url]) {
+      this._filmLoading[url] = true;
+      fetch(url).then(r => r.ok ? r.blob() : Promise.reject(r.status))
+        .then(b => { const u = URL.createObjectURL(b); (this._blobs = this._blobs || []).push(u); this.setState(s => ({ films: { ...(s.films || {}), [url]: u } })); })
+        .catch(() => this.setState(s => ({ films: { ...(s.films || {}), [url]: 'fail' } })));
+    }
+    return null;
+  }
+  onFilmError = (e) => { const src = e && e.currentTarget && e.currentTarget.getAttribute('src'); if (!src) return; this.setState(s => { const films = { ...(s.films || {}) }; Object.keys(films).forEach(k => { if (films[k] === src) films[k] = 'fail'; }); return { films, filmFail: { ...(s.filmFail || {}), [src]: true } }; }); };
+  pcClock() { try { return new Intl.DateTimeFormat('en-GB', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'America/Denver' }).format(new Date()); } catch (e) { return ''; } }
+  componentDidMount() {
+    this.setState({ pcTime: this.pcClock() }); this.pcTimer = setInterval(() => this.setState({ pcTime: this.pcClock() }), 30000);
+    this.onHash = () => { if (this.audio) this.audio.pause(); this.setState({ route: this.parse(), img:0, open:{}, menuOpen:false, cartOpen:false, heroIn:false, sound:false, buyVisible:true }); window.scrollTo(0, 0); this.kick(); };
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onScroll = () => { const s = window.scrollY > 40; if (s !== this.state.scrolled) this.setState({ scrolled: s }); };
+    window.addEventListener('hashchange', this.onHash);
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('scroll', this.onScroll, { passive:true });
+    this.onKey = e => {
+      const box = this.state.cartOpen ? this.cartEl : this.state.menuOpen ? this.menuEl : null;
+      if (!box) return;
+      if (e.key === 'Escape') { e.preventDefault(); this.setState({ cartOpen:false, menuOpen:false }); return; }
+      if (e.key !== 'Tab') return;
+      const fs = [...box.querySelectorAll('a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(x => x.offsetParent !== null);
+      if (!fs.length) return;
+      const first = fs[0], last = fs[fs.length - 1], a = document.activeElement;
+      if (!box.contains(a)) { e.preventDefault(); first.focus(); }
+      else if (e.shiftKey && a === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', this.onKey);
+    this.kick();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('hashchange', this.onHash);
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('scroll', this.onScroll);
+    document.removeEventListener('keydown', this.onKey);
+    (this._blobs || []).forEach(u => URL.revokeObjectURL(u));
+    if (this.io) this.io.disconnect();
+    if (this.audio) this.audio.pause();
+    document.body.style.overflow = '';
+    clearTimeout(this.toastT);
+  }
+  heroVidRef = el => { this.heroVid = el; if (el) { el.onerror = this.onFilmError; el.muted = true; el.loop = true; el.playsInline = true; el.setAttribute('playsinline', ''); this.syncVids(); } };
+  prodVidRef = el => { this.prodVid = el; if (el) { el.onerror = this.onFilmError; el.muted = true; el.loop = true; el.playsInline = true; el.setAttribute('playsinline', ''); this.syncVids(); } };
+  heroImgRef = el => { this.heroImg = el; };
+  cartRef = el => { this.cartEl = el; };
+  menuRef = el => { this.menuEl = el; };
+  buyRef = el => {
+    if (this.io) { this.io.disconnect(); this.io = null; }
+    if (el && typeof IntersectionObserver !== 'undefined') { this.io = new IntersectionObserver(([en]) => { if (en.isIntersecting !== this.state.buyVisible) this.setState({ buyVisible: en.isIntersecting }); }); this.io.observe(el); }
+    else if (!el && !this.state.buyVisible) this.setState({ buyVisible:true });
+  };
+  syncVids() {
+    const S = this.state;
+    [this.heroVid, this.prodVid].forEach(v => { if (!v || !v.isConnected) return; v.muted = v === this.heroVid ? !S.sound : true; if (S.paused) v.pause(); else { const p = v.play(); if (p && p.catch) p.catch(() => {}); } });
+  }
+  toggleMotion = () => {
+    if (!this.state.paused) {
+      const fr = this.heroImg && this.heroImg.isConnected ? getComputedStyle(this.heroImg).transform : null;
+      this.setState({ paused:true, frozen: fr && fr !== 'none' ? fr : 'scale(1)' });
+    } else this.setState({ paused:false, frozen:null });
+  };
+  toggleSound = () => {
+    const on = !this.state.sound, url = this.props.heroAudio || '';
+    if (!this.props.heroFilm && url) {
+      if (!this.audio) { this.audio = new Audio(url); this.audio.loop = true; }
+      if (on) { const p = this.audio.play(); if (p && p.catch) p.catch(() => {}); } else this.audio.pause();
+    }
+    if (on && !this.props.heroFilm && !url) this.say('Prototype: plays hero_audio from Shopify once it is uploaded.');
+    this.setState({ sound:on });
+  };
+  componentDidUpdate() {
+    const S = this.state;
+    const ps = this._prev || { paused:false, sound:false, cartOpen:false, menuOpen:false };
+    this._prev = { paused:S.paused, sound:S.sound, cartOpen:S.cartOpen, menuOpen:S.menuOpen };
+    if (ps.paused !== S.paused || ps.sound !== S.sound) this.syncVids();
+    const wasOpen = ps.cartOpen || ps.menuOpen, isOpen = S.cartOpen || S.menuOpen;
+    if (!wasOpen && isOpen) {
+      this.lastFocus = document.activeElement;
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => { const box = S.cartOpen ? this.cartEl : this.menuEl; const b = box && box.querySelector('button'); if (b) b.focus(); }, 0);
+    } else if (wasOpen && !isOpen) {
+      document.body.style.overflow = '';
+      if (this.lastFocus && this.lastFocus.isConnected) this.lastFocus.focus();
+    }
+  }
+  kick() { clearTimeout(this.kickT); this.kickT = setTimeout(() => this.setState({ heroIn:true }), 80); }
+
+  go(path) { return (e) => { if (e && e.preventDefault) e.preventDefault(); const h = '#/' + path; if (location.hash === h) { window.scrollTo(0,0); this.setState({ menuOpen:false }); } else location.hash = h; }; }
+  say(msg) { clearTimeout(this.toastT); this.setState({ toast: msg }); this.toastT = setTimeout(() => this.setState({ toast:null }), 3200); }
+
+  add(item) {
+    const cart = this.state.cart.slice();
+    const i = cart.findIndex(c => c.key === item.key);
+    if (i >= 0) cart[i] = { ...cart[i], qty: cart[i].qty + 1 }; else cart.push({ ...item, qty:1 });
+    this.saveCart(cart);
+    this.setState({ cart, cartOpen:true });
+  }
+  setQty(key, d) {
+    const cart = this.state.cart.map(c => c.key === key ? { ...c, qty: c.qty + d } : c).filter(c => c.qty > 0);
+    this.saveCart(cart);
+    this.setState({ cart });
+  }
+
+  renderVals() {
+    const C = Component, S = this.state;
+    const ph = this.props.placeholderPrices ?? false;
+    const motion = (this.props.heroMotion ?? true) && !S.paused && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const fmt = n => ph ? '[price]' : '$' + n;
+    const mobile = S.w < 1080, narrow = S.w < 760;
+    const page = S.route.page;
+    const known = ['home', 'range', 'field-care', 'about', 'p', 'refill-programme'];
+    const pg = known.includes(page) ? page : 'home';
+    const byHandle = h => C.POSTINGS.find(p => p.handle === h);
+    const careImg = c => c.img ? 'assets/merowen_care_' + c.img + '_v05.jpg' : null;
+
+    const hr = S.hour % 24;
+    const byHour = C.POSTINGS.slice().sort((a, b) => a.h - b.h);
+    const pickP = byHour.filter(p => p.h <= hr).pop() || byHour[byHour.length - 1];
+    const lit = S.hover || pickP.handle;
+    const card = p => ({ ...p, img: 'assets/merowen_master_' + p.handle + '_v08.jpg', href: '#/p/' + p.handle, go: this.go('p/' + p.handle),
+      onEnter: () => this.setState({ hover: p.handle }), fromPrice: 'FROM ' + fmt(C.SIZES[0].price) + ' · 50 ML',
+      railLeft: (p.h / 24 * 100).toFixed(2) + '%', railLabel: narrow ? p.hour.slice(0, 2) : S.w < 1280 ? p.hour : p.hour + ' ' + p.name, kindTag: p.kind === 'city' ? 'LONDON' : 'PARK CITY',
+      railColor: lit === p.handle ? '#AEB4BB' : '#EDEDEB', zoom: lit === p.handle ? 'scale(1.03)' : 'scale(1)' });
+    const careCard = c => { const p = byHandle(c.scent); return { ...c, img: careImg(c), hasImg: !!c.img, noImg: !c.img, href: '#/p/' + c.handle, go: this.go('p/' + c.handle), scentName: p.name, scentColor: p.color, priceText: fmt(c.price) }; };
+
+    const order = this.props.homeOrder ?? 'hour';
+    const homePostings = C.POSTINGS.slice().sort((a, b) => order === 'hour' ? a.h - b.h : a.num.localeCompare(b.num)).map(card);
+    const railTicks = [0, 6, 12, 18, 24].map(h => ({ left: (h / 24 * 100) + '%', shift: h === 0 ? '0' : h === 24 ? '-100%' : '-50%', label: String(h).padStart(2, '0') }));
+
+    // product view model
+    let prod = null;
+    if (pg === 'p') {
+      const h = S.route.handle;
+      const p = byHandle(h), r = C.RANGE.find(x => x.handle === h), c = C.CARE.find(x => x.handle === h);
+      const toggle = k => () => this.setState(s => ({ open: { ...s.open, [k]: !s.open[k] } }));
+      const det = (k, title, body) => ({ title, body, open: !!S.open[k], sign: S.open[k] ? '−' : '+', onToggle: toggle(k) });
+      const optSel = S.opt[h] ?? 0;
+      const optBtn = (list) => list.map((o, i) => ({ ...o, border: i === optSel ? '#AEB4BB' : '#2A2A2D', color: i === optSel ? '#EDEDEB' : '#B4B4B1', onClick: () => this.setState(s => ({ opt: { ...s.opt, [h]: i } })) }));
+      const shipping = det('ship', 'Shipping and returns', 'Complimentary shipping in the United States and United Kingdom. Unopened flacons may be returned within 30 days. Opened flacons may be returned within 14 days; we ask only that you tell us why.');
+      if (p) {
+        const imgs = ['assets/merowen_master_' + p.handle + '_v08.jpg', ...p.extra, 'assets/merowen_box_' + p.handle + '_v08.jpg'];
+        const size = C.SIZES[optSel] || C.SIZES[0];
+        const layers = C.CARE.filter(x => x.scent === p.handle).map(careCard);
+        prod = { isPosting:true, name:p.name, eyebrow:'Posting ' + p.num + ' · Eau de Parfum', line:p.line, coordLeft:'POSTING ' + p.num + ' — ' + p.name, coordRight:p.coords + ' — ' + p.hour,
+          desc:p.desc,
+          film:this.filmSrc(p.film), ratio:'4 / 5', images: imgs, hasSizes:true, optionLabel:'Size', options: optBtn(C.SIZES.map(s => ({ label:s.ml.toUpperCase(), sub:fmt(s.price) }))),
+          canBuy:true, priceText: fmt(size.price), note:'Began with the Dossier? Enter the code from its card in the bag.', barSub:'EDP · ' + size.ml.toUpperCase(),
+          onAdd: () => this.add({ key:p.handle + '-' + size.ml, handle:p.handle, name:p.name, variant:'EDP · ' + size.ml.toUpperCase(), price:size.price, img:imgs[0] }),
+          specs: [ { k:'Hero material', v:p.material }, { k:'Family', v:p.family }, { k:'Top', v:p.top }, { k:'Heart', v:p.heart }, { k:'Base', v:p.base }, { k:'Liquid', v:p.color.toUpperCase(), swatch:p.color, hasSwatch:true, font:"'IBM Plex Mono',monospace" } ],
+          details: [ det('flacon', 'The flacon', 'Heavy-base glass; solid blackened-steel cap in satin gunmetal, knurled like a dive-watch crown, over a slim steel neck collar engraved with posting, hour, batch and date. No paper label: the name is printed on the glass and the coordinates are etched into the base.'), det('box', 'The box', 'Uncoated black FSC board, blind-debossed seal, coordinate line printed in bone ink, magnetic close. No foil, no plastic insert.'), det('ing', 'Ingredients and natural-origin index', '[Final INCI list and ISO 16128 natural-origin figure from the formulator]'), shipping ],
+          crumb:'THE POSTINGS', crumbHref:'#/range', crumbGo:this.go('range'),
+          hasProv:true, batch:'BATCH 01 · 2026 · ' + p.coords,
+          prov:[ { k:'Composed', v:'In Park City, Utah. Perfumer named on the batch card.' }, { k: p.kind === 'city' ? 'Composed for' : 'From', v: p.place }, { k:'Material origin', v: p.origin }, { k:'Source', v:C.PROV[p.handle].source }, { k:'Producer', v:C.PROV[p.handle].producer }, { k:'Composed', v:'Park City, Utah' }, { k:'Bottled', v:'Bottled by hand in Park City, Utah' }, { k:'Concentration', v:'Eau de Parfum, 20% · 50 ml and 100 ml' } ],
+          hasLayers: layers.length > 0, layers, layersTitle: 'Layers with ' + p.name.charAt(0) + p.name.slice(1).toLowerCase(),
+          hasOthers:true, others: C.POSTINGS.filter(x => x.handle !== p.handle).map(card) };
+      } else if (r) {
+        const opts = r.options ? C.POSTINGS.map(x => ({ label:x.name, sub:x.num + ' · ' + x.hour })) : [];
+        const chosen = r.options ? C.POSTINGS[optSel] : null;
+        prod = { isRange:true, name:r.name, eyebrow:r.role + ' · ' + r.format, line:r.line, desc:r.desc, ratio:'1 / 1', images:[r.img],
+          hasSizes: !!r.options, optionLabel:'Posting', options: optBtn(opts),
+          canBuy: !r.preparing, preparing: !!r.preparing, notifyLabel: S.open['notify-' + h] ? 'We will write when it is ready' : 'Notify me',
+          onNotify: () => { this.setState(s => ({ open: { ...s.open, ['notify-' + h]: true } })); this.say('Noted. One email when it is ready.'); },
+          priceText: fmt(r.price), note: r.preparing ? 'Joins the range once the core postings sell through.' : (r.handle === 'dossier' ? 'Arrives with a single-use code that credits the price toward your first flacon.' : 'Return the empty flask with your next order.'),
+          barSub: r.format.toUpperCase() + (chosen ? ' · ' + chosen.name : ''), hasMore: r.handle === 'refill', moreLabel:'How the programme works', moreHref:'#/refill-programme', moreGo:this.go('refill-programme'),
+          onAdd: () => this.add({ key:r.handle + (chosen ? '-' + chosen.handle : ''), handle:r.handle, name:r.name, variant: r.format.toUpperCase() + (chosen ? ' · ' + chosen.name : ''), price:r.price, img:r.img }),
+          specs: [ { k:'Format', v:r.format }, { k:'Price', v:fmt(r.price), font:"'IBM Plex Mono',monospace" } ],
+          details: [ shipping ], crumb:'THE RANGE', crumbHref:'#/range', crumbGo:this.go('range'),
+          hasOthers: r.handle === 'dossier', others: r.handle === 'dossier' ? C.POSTINGS.map(card) : [] };
+      } else if (c) {
+        const sp = byHandle(c.scent);
+        const sn = sp.name.charAt(0) + sp.name.slice(1).toLowerCase();
+        const v = c.variants ? (c.variants[optSel] || c.variants[0]) : null;
+        prod = { isCare:true, name:c.name, eyebrow:'Field Care · ' + c.code, line:c.line, desc:(c.note ? c.note + ' ' : '') + 'Scented with ' + sn + ', so it layers with the fragrance.',
+          ratio:'4 / 5', images: c.img ? [careImg(c)] : [], hasSizes: !!c.variants, optionLabel:'Format', options: c.variants ? optBtn(c.variants.map(x => ({ label:x.label, sub:fmt(x.price) }))) : [],
+          canBuy:true, priceText: fmt(v ? v.price : c.price), note:'', barSub: c.code + ' · ' + (v ? v.label : c.size.toUpperCase()),
+          onAdd: () => this.add({ key:c.handle + (v ? '-' + v.label : ''), handle:c.handle, name:c.name, variant:c.code + ' · ' + (v ? v.label : c.size.toUpperCase()), price: v ? v.price : c.price, img:careImg(c) }),
+          specs: [ { k:'Step', v:c.step }, { k:'Scent', v:sp.name + ' · ' + sp.num, swatch:sp.color, hasSwatch:true }, { k:'Size', v:c.size, font:"'IBM Plex Mono',monospace" }, { k:'Key ingredients', v:c.keys }, { k:'Vessel', v:c.vessel } ],
+          details: [ det('ing', 'Full ingredients', 'The full INCI list is printed on the carton and on the product page once each batch is released.'), shipping ],
+          crumb:'FIELD CARE', crumbHref:'#/field-care', crumbGo:this.go('field-care'),
+          hasLayers:true, layers: C.CARE.filter(x => x.step === c.step && x.handle !== c.handle).map(careCard), layersTitle:'Also for ' + c.step.toLowerCase(),
+          hasOthers:false, others:[] };
+        if (!prod.layers.length) prod.hasLayers = false;
+      }
+      if (prod) {
+        const imgs = prod.images;
+        const idx = Math.min(S.img, Math.max(imgs.length - 1, 0));
+        prod.hasFilm = !!prod.film && motion && idx === 0 && !S.paused;
+        prod.hasImg = imgs.length > 0 && !prod.hasFilm; prod.noImg = imgs.length === 0;
+        prod.hasMore = !!prod.hasMore; prod.barSub = prod.barSub || '';
+        prod.mainImg = imgs[idx];
+        prod.hasThumbs = imgs.length > 1;
+        prod.images = imgs.map((src, i) => ({ src, border: i === idx ? '#AEB4BB' : '#2A2A2D', onClick: () => this.setState({ img:i }) }));
+        prod.specs = prod.specs.map(s => ({ hasSwatch:false, swatch:'transparent', font:'inherit', ...s }));
+        prod.preparing = !!prod.preparing;
+        prod.hasProv = !!prod.hasProv;
+      }
+    }
+    const isProduct = pg === 'p' && !!prod;
+    const effPage = pg === 'p' && !prod ? 'home' : pg;
+
+    const cartLines = S.cart.map(li => ({ ...li, hasImg: !!li.img, total: fmt(li.price * li.qty), inc: () => this.setQty(li.key, 1), dec: () => this.setQty(li.key, -1), remove: () => this.setQty(li.key, -li.qty) }));
+    const count = S.cart.reduce((a, c) => a + c.qty, 0);
+    const sub0 = S.cart.reduce((a, c) => a + c.price * c.qty, 0);
+    const dossier = C.RANGE[0];
+    const hasFlacon = S.cart.some(c => C.POSTINGS.some(p => p.handle === c.handle));
+    const credit = S.code && hasFlacon ? Math.min(dossier.price, sub0) : 0;
+    const sub = sub0 - credit;
+    const codeMsg = S.codeErr ? S.codeErr : (S.code && !hasFlacon ? 'Saved. The credit applies once a 50 or 100 ml Posting is in the bag.' : '');
+    const showBuyBar = isProduct && narrow && !S.buyVisible && !S.cartOpen && !S.menuOpen && prod.canBuy;
+    const filmUrl = narrow && !this.props.heroFilm ? null : this.filmSrc(this.props.heroFilm || 'films/merowen_hero_film_desktop_v08e.mp4'); // mobile film pending regeneration; phones get the portrait still
+
+    const nav = [ ['The Postings', 'range'], ['The Dossier', 'p/dossier'], ['Field Care', 'field-care'], ['About', 'about'] ];
+    const active = path => (path === 'range' && effPage === 'range') || (path === 'field-care' && effPage === 'field-care') || (path === 'about' && effPage === 'about') || (path === 'p/dossier' && S.route.handle === 'dossier');
+    const homeTop = effPage === 'home' && !S.scrolled;
+    const steps = ['All', 'Shave', 'Hair', 'Skin', 'Body'];
+
+    return {
+      isMobile: mobile, isDesktop: !mobile,
+      notHome: effPage !== 'home', isRefill: effPage === 'refill-programme',
+      heroFilm: filmUrl, heroHasFilm: !!filmUrl && motion && !S.paused, heroNoFilm: !(filmUrl && motion && !S.paused),
+      heroTrans: S.frozen ? 'none' : 'transform 26s linear',
+      heroCtlTop: narrow ? '88px' : 'auto', heroCtlBottom: narrow ? 'auto' : 'clamp(32px,7vh,80px)',
+      showMotionBtn: motion || S.paused, motionLabel: S.paused ? 'Play' : 'Pause', motionAria: S.paused ? 'Play motion' : 'Pause motion',
+      toggleMotion: this.toggleMotion, toggleSound: this.toggleSound,
+      soundLabel: S.sound ? 'Sound off' : 'Sound on', soundPressed: S.sound ? 'true' : 'false',
+      heroVidRef: this.heroVidRef, prodVidRef: this.prodVidRef, heroImgRef: this.heroImgRef, cartRef: this.cartRef, menuRef: this.menuRef, buyRef: this.buyRef,
+      pcTime: S.pcTime || '', findHour: S.hour, hourText: String(hr).padStart(2, '0') + ':00', hourLeft: (S.hour / 24 * 100).toFixed(2) + '%',
+      onHour: (e) => this.setState({ hour: +e.target.value, hover:null }),
+      hourPick: { num: pickP.num, name: pickP.name, line: pickP.line, href:'#/p/' + pickP.handle, go: this.go('p/' + pickP.handle) },
+      heroLive: { hour: String(hr).padStart(2, '0') + ':00', name: 'POSTING ' + pickP.num + ' — ' + pickP.name, coords: pickP.coords + ' — ' + pickP.hour, href:'#/p/' + pickP.handle, go: this.go('p/' + pickP.handle), aria: 'Your hour: ' + pickP.name + ', posting ' + pickP.num },
+      homeCare: ['aftershave-balm', 'shampoo', 'basalt-face-wash', 'deodorant'].map(h => careCard(C.CARE.find(c => c.handle === h))),
+      refillPrice: fmt(C.RANGE[3].price), goRefillProduct: this.go('p/refill'), goDeodorant: this.go('p/deodorant'),
+      deoCase: fmt(58), deoRefill: fmt(22),
+      refillSteps: [
+        { n:'01', k:'Choose your posting', v:'Order the 200 ml Refill flask in Blackfriars, Guardsman, Mayfair or Empire.' },
+        { n:'02', k:'Refill the flacon', v:'Unscrew the cap, fit the steel transfer nozzle that ships with the flask, and press. The flacon fills in under a minute.' },
+        { n:'03', k:'Return the empty', v:'Send the empty flask back in its own box with the prepaid label. The flask is cleaned and refilled; you receive a credit toward your next order.' }
+      ],
+      showBuyBar, toastBottom: showBuyBar ? '96px' : '24px', menuExpanded: S.menuOpen ? 'true' : 'false',
+      code: S.code, codeSet: !!S.code, codeEmpty: !S.code, creditText: credit ? '−' + fmt(credit) : fmt(0), creditColor: credit ? '#EDEDEB' : '#8A8A87',
+      hasCodeMsg: !!codeMsg, codeMsg,
+      applyCode: (e) => { e.preventDefault(); const v = (e.target.elements.code.value || '').trim().toUpperCase(); if (!/^[A-Z0-9-]{6,}$/.test(v)) { this.setState({ codeErr:'That code does not look right. It is printed on the card inside your Dossier.' }); return; } this.setState({ code:v, codeErr:null }); },
+      removeCode: () => this.setState({ code:null, codeErr:null }),
+      shopShave: () => { this.setState({ careStep:'Shave' }); window.scrollTo(0, 0); },
+      packaging: [
+        { k:'Flacon', v:'Heavy-base glass; solid blackened-steel cap in satin gunmetal, knurled like a dive-watch crown, over a slim steel neck collar engraved with posting, hour, batch and date.' },
+        { k:'Outer box', v:'Uncoated black FSC board, blind-debossed seal, coordinate line printed in bone ink, magnetic close. No foil, no plastic insert.' },
+        { k:'Field Care', v:'Obsidian glass or black aluminium, blackened-steel caps and pumps, refillable steel deodorant case.' },
+        { k:'Rule', v:'No gold or brass hardware, no paper labels, no foil.' }
+      ],
+      prodCols: narrow ? 'minmax(0,1fr)' : 'minmax(0,1.1fr) minmax(0,1fr)',
+      isHome: effPage === 'home', isRange: effPage === 'range', isCare: effPage === 'field-care', isAbout: effPage === 'about', isProduct,
+      headerBg: homeTop ? 'rgba(11,11,12,0)' : '#0B0B0C', headerBorder: homeTop ? 'rgba(42,42,45,0)' : '#2A2A2D',
+      navLinks: nav.slice(0, 3).map(([label, path]) => ({ label, href:'#/' + path, go:this.go(path), color: active(path) ? '#AEB4BB' : '#B4B4B1' })),
+      menuLinks: [['The Postings', 'range'], ['The Dossier', 'p/dossier'], ['Field Care', 'field-care'], ['About', 'about'], ['Home', '']].map(([label, path]) => ({ label, href:'#/' + path, go:this.go(path) })),
+      goHome: this.go(''), goRange: this.go('range'), goCare: this.go('field-care'), goDossier: this.go('p/dossier'),
+      openMenu: () => this.setState({ menuOpen:true }), closeMenu: () => this.setState({ menuOpen:false }),
+      openCart: () => this.setState({ cartOpen:true }), closeCart: () => this.setState({ cartOpen:false }),
+      heroSrc: narrow ? 'assets/merowen_hero_mobile_v05.jpg' : 'assets/merowen_brand_hero_v08.jpg',
+      heroPos: narrow ? '50% 0%' : S.w < 1200 ? '100% 50%' : '70% 50%',
+      heroScale: S.frozen ? S.frozen : motion && S.heroIn ? 'scale(1.07)' : 'scale(1)',
+      heroOpacity: !motion || S.heroIn || S.paused ? 1 : 0, heroLift: !motion || S.heroIn || S.paused ? 'none' : 'translateY(14px)',
+      typeClip: !motion || S.heroIn ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)',
+      homePostings, railTicks, clearHover: () => this.setState({ hover:null }),
+      postingsByNum: C.POSTINGS.map(card),
+      rangeItems: C.RANGE.map(r => ({ ...r, tag:(r.role + ' · ' + r.format).toUpperCase(), href:'#/p/' + r.handle, go:this.go('p/' + r.handle), preparing: !!r.preparing, priceText: fmt(r.price) })),
+      careTeaser: ['aftershave-balm', 'shampoo', 'basalt-face-wash'].map(h => careCard(C.CARE.find(c => c.handle === h))),
+      careSteps: steps.map(s => ({ label:s, bg: S.careStep === s ? '#EDEDEB' : 'transparent', color: S.careStep === s ? '#0B0B0C' : '#B4B4B1', border: S.careStep === s ? '#EDEDEB' : '#2A2A2D', onClick: () => this.setState({ careStep:s }) })),
+      careList: C.CARE.filter(c => S.careStep === 'All' || c.step === S.careStep).map(careCard),
+      proofs: [
+        { k:'Natural-origin index', v:'Calculated to ISO 16128 and printed on every label.' },
+        { k:'Named places', v:'Guardsman Pass. Empire Canyon. Blackfriars. Mayfair.' },
+        { k:'Batch-dated flacons', v:'Batch and maceration date engraved on the steel collar.' },
+        { k:'A lifetime refill', v:'A 200 ml flask for every posting. Return the empty.' }
+      ],
+      pillars: [
+        { k:'Purpose', v:'Two mountains, two streets: the places we stand, bottled for people who move through the world with composure.' },
+        { k:'Promise', v:'Each fragrance names one place, one hour and one material. The mountain postings are made from their place; the city postings are composed for theirs. We say which.' },
+        { k:'Proof', v:'Natural-origin index on every label, named material origins, batch-dated flacons, a lifetime refill.' },
+        { k:'Personality', v:'Discreet. Well-travelled. Exacting. Quietly wry.' }
+      ],
+      footerCols: [
+        { title:'Shop', links: [['The Postings', 'range'], ['The Dossier', 'p/dossier'], ['The Refill', 'p/refill'], ['Field Care', 'field-care']].map(([label, path]) => ({ label, href:'#/' + path, go:this.go(path) })) },
+        { title:'House', links: [['About', 'about'], ['Shipping', 'about'], ['The Refill Programme', 'refill-programme'], ['Contact', 'about']].map(([label, path]) => ({ label, href:'#/' + path, go:this.go(path) })) }
+      ],
+      onSubscribe: (e) => { e.preventDefault(); e.target.reset(); this.say('Noted.'); },
+      prod: prod || { specs:[], details:[], images:[], options:[], layers:[], others:[] },
+      cartLines, cartCount: String(count).padStart(2, '0'), cartEmpty: count === 0, cartHasItems: count > 0, subtotal: fmt(sub),
+      hasDossierCredit: S.cart.some(c => c.handle === 'dossier'), dossierPrice: fmt(dossier.price),
+      addDossier: () => this.add({ key:'dossier', handle:'dossier', name:dossier.name, variant:'4 × 2 ML VIALS', price:dossier.price, img:dossier.img }),
+      onCheckout: () => this.say('Prototype: hands off to Shopify checkout (cart.checkoutUrl).'),
+      menuOpen: S.menuOpen, cartOpen: S.cartOpen, hasToast: !!S.toast, toast: S.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

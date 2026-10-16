@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { CareTeaserCard, RangeCard } from "@/components/Cards";
-import { CoordLine } from "@/components/CoordLine";
 import { FindYourHour } from "@/components/FindYourHour";
 import { HeroMedia } from "@/components/HeroMedia";
+import { ParkCityTime } from "@/components/ParkCityTime";
+import { YourHour } from "@/components/YourHour";
 import { InnerCircleForm } from "@/components/InnerCircleForm";
-import { HERO_FILM, RANGE, careItem, media, posting } from "@/lib/catalog";
+import { HERO_FILM, HOUSE_COORDS, RANGE, careItem, media } from "@/lib/catalog";
 
 const PROOFS = [
   { k: "Natural-origin index", v: "Calculated to ISO 16128 and printed on every label." },
-  { k: "Named sourcing regions", v: "Dhofar. The Middle Atlas. Sud, Haiti. Atlantic Scotland." },
+  { k: "Named places", v: "Guardsman Pass. Empire Canyon. Blackfriars. Mayfair." },
   { k: "Batch-dated flacons", v: "Batch and maceration date engraved on the steel collar." },
   { k: "A lifetime refill", v: "A 200 ml flask for every posting. Return the empty." },
 ];
@@ -16,25 +17,26 @@ const PROOFS = [
 const CARE_TEASER = ["aftershave-balm", "shampoo", "basalt-face-wash", "deodorant"].map((h) => careItem(h)!);
 
 export default function HomePage() {
-  const mirbat = posting("mirbat")!;
   return (
     <main>
       <section className="hero" aria-label="Merowen">
         <HeroMedia
-          still={media("merowen_brand_hero_v05.jpg")}
-          stillMobile={media("merowen_hero_mobile_v05.jpg")}
+          still={media("merowen_brand_hero_v08.jpg")}
+          stillMobile={media("merowen_brand_hero_v08.jpg")}
           film={HERO_FILM}
-          alt="Mirbat on wet basalt at night"
+          alt="Blackfriars on wet stone at night"
         />
         <div className="hero__inner">
           <div className="hero__copy">
-            <div className="eyebrow eyebrow--stone">Park City, Utah</div>
+            <div className="house-line">
+              <span className="eyebrow eyebrow--stone">Park City, Utah</span>
+              <span className="mono mono--ash">
+                {HOUSE_COORDS} · <ParkCityTime /> MT
+              </span>
+            </div>
             <h1 className="h1">
-              Composed in the wild. <em>Worn in the dark.</em>
+              Composed in the mountains. <em>Worn in the city.</em>
             </h1>
-            <p className="lede">
-              Four Eaux de Parfum. Each names one place, one hour and one material, and can be traced to them.
-            </p>
             <div className="btn-row">
               <Link href="/range" className="btn btn--primary">
                 The Postings
@@ -43,7 +45,7 @@ export default function HomePage() {
                 Begin with the Dossier
               </Link>
             </div>
-            <CoordLine posting={mirbat} animate />
+            <YourHour />
           </div>
         </div>
       </section>
@@ -54,11 +56,11 @@ export default function HomePage() {
             <div className="head-row__title">
               <div className="eyebrow">The Postings</div>
               <h2 className="h2" id="postings-title">
-                A wardrobe of <em>hours.</em>
+                Two mountains. <em>Two streets.</em>
               </h2>
             </div>
             <p className="copy head-row__aside">
-              Four unisex Eaux de Parfum, each tied to one place and one hour. Together they cover a full day.
+              Four Eaux de Parfum. One place, one hour, one material. Together they cover the day.
             </p>
           </div>
           <FindYourHour />
@@ -89,7 +91,7 @@ export default function HomePage() {
       <section className="section" aria-labelledby="proof-title">
         <div className="wrap stack stack--lg">
           <h2 className="h2 measure" id="proof-title">
-            Traceable to <em>the source.</em>
+            Honest about <em>the source.</em>
           </h2>
           <div className="proofs">
             {PROOFS.map((p) => (
@@ -131,8 +133,8 @@ export default function HomePage() {
 
       <section className="band" aria-labelledby="band-title">
         <img
-          src={media("merowen_brand_wearers_v01.jpg")}
-          alt="Two wearers walking a sea-cliff path at dusk"
+          src={media("merowen_brand_wearers_v09.jpg")}
+          alt="Two wearers walking a ridgeline above Park City at dusk"
           loading="lazy"
           decoding="async"
         />

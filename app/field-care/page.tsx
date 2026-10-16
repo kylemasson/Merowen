@@ -66,7 +66,7 @@ export default async function FieldCarePage({ searchParams }: Props) {
             <h2 className="h2 h2--md">
               A close shave <em>before first light.</em>
             </h2>
-            <p className="copy">Shave Cream in Azrou, Aftershave Balm in Mirbat, Aftershave Tonic in Kilda.</p>
+            <p className="copy">Shave Cream in Guardsman, Aftershave Balm in Blackfriars, Aftershave Tonic in Empire.</p>
             <Link href="/field-care?step=shave#grid" className="btn btn--ghost btn--start">
               Shop the shave
             </Link>

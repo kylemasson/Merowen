@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { FooterInnerCircle } from "./InnerCircleForm";
+import { ParkCityTime } from "./ParkCityTime";
+import { HOUSE_COORDS } from "@/lib/catalog";
 
 const COLUMNS = [
   {
@@ -29,8 +31,13 @@ export function Footer({ version }: { version: string }) {
         <div className="footer__grid">
           <div className="footer__brand">
             <div className="footer__word">MEROWEN</div>
-            <p className="small">Composed in the wild. Worn in the dark.</p>
-            <div className="mono mono--ash">PARK CITY, UTAH · EST. 2026</div>
+            <p className="small">Composed in the mountains. Worn in the city.</p>
+            <div className="stack stack--tight">
+              <div className="mono mono--ash">PARK CITY, UTAH · {HOUSE_COORDS} · EST. 2026</div>
+              <div className="mono mono--ash">
+                LOCAL TIME <ParkCityTime /> MT
+              </div>
+            </div>
             <FooterInnerCircle />
           </div>
           {COLUMNS.map((col) => (

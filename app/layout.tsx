@@ -19,13 +19,13 @@ import { SITE_VERSION, siteUrl } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 const description =
-  "Four Eaux de Parfum from Merowen, composed in Park City, Utah. Each names one place, one hour and one material, and can be traced to them.";
+  "Four Eaux de Parfum from Merowen, composed in Park City, Utah. Two mountains, two streets: one place, one hour, one material each.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: { default: "Merowen · Composed in the wild. Worn in the dark.", template: "%s · Merowen" },
+  title: { default: "Merowen · Composed in the mountains. Worn in the city.", template: "%s · Merowen" },
   description,
-  openGraph: { siteName: "Merowen", type: "website", description, images: ["/media/merowen_brand_hero_v05.jpg"] },
+  openGraph: { siteName: "Merowen", type: "website", description, images: ["/media/merowen_brand_hero_v08.jpg"] },
   other: { "merowen-site-version": SITE_VERSION },
 };
 

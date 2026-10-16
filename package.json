@@ -1,8 +1,8 @@
 {
-  "name": "merowen-v6",
-  "version": "6.0.0",
+  "name": "merowen-v9",
+  "version": "9.0.0",
   "private": true,
-  "description": "Merowen storefront, v6. Next.js on Cloudflare Workers (OpenNext) with the Shopify Storefront API.",
+  "description": "Merowen storefront, v9. Next.js on Cloudflare Workers (OpenNext) with the Shopify Storefront API.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

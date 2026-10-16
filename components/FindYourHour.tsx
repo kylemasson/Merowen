@@ -45,7 +45,7 @@ export function FindYourHour() {
               onMouseLeave={() => setHover(null)}
             >
               <span className="rail__stop-label rail__stop-label--long">
-                {hh(p.hour)} {p.name.toUpperCase()}
+                {hh(p.hour)} <span className="rail__stop-name">{p.name.toUpperCase()}</span>
               </span>
               <span className="rail__stop-label rail__stop-label--short">{String(p.hour).padStart(2, "0")}</span>
               <span className="rail__stop-dot" />

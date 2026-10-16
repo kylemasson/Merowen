@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { CareItem, Posting, RangeItem } from "@/lib/catalog";
-import { SIZES, hh, money, posting as postingBy } from "@/lib/catalog";
+import { SIZES, hh, kindTag, money, posting as postingBy } from "@/lib/catalog";
 
 type PostingCardProps = {
   posting: Posting;
@@ -27,7 +27,7 @@ export function PostingCard({ posting: p, lit, size = "lg", showPrice = true, on
       <div className="card__body">
         <div className="card__meta">
           <span>
-            {p.num} · {hh(p.hour)}
+            {p.num} · {hh(p.hour)} · {kindTag(p)}
           </span>
           <span className="swatch" style={{ background: p.liquid }} aria-hidden="true" />
         </div>

@@ -1,10 +1,10 @@
-# Merowen storefront · v6
+# Merowen storefront · v9
 
-A from-scratch rebuild of the Merowen site from the v4 Graphite design handoff in
-`design_handoff_merowen_storefront/`. Next.js 16.3 on Cloudflare Workers (OpenNext), with the
+The Merowen site, built from the Graphite design handoffs (v4 layouts, v9 Park City + London rebrand in
+`design_handoff_merowen_v9/`). Next.js 16.3 on Cloudflare Workers (OpenNext), with the
 Shopify Storefront API for prices, cart and checkout.
 
-You can tell v6 is live by the footer (`SITE V6`) or the `merowen-site-version` meta tag.
+You can tell v9 is live by the footer (`SITE V9`) or the `merowen-site-version` meta tag.
 
 ## Run it
 
@@ -31,7 +31,7 @@ npx wrangler secret put SHOPIFY_STOREFRONT_ACCESS_TOKEN
 ```
 
 Then prices, variants and checkout come from Shopify, matched by product handle:
-`mirbat`, `azrou`, `torbeck`, `kilda`, `the-dossier`, `mirbat-extrait`, `the-field-kit`,
+`blackfriars`, `guardsman`, `mayfair`, `empire`, `the-dossier`, `blackfriars-extrait`, `the-field-kit`,
 `the-refill`, and the Field Care handles in `lib/catalog.ts`. A posting film set in the
 `merowen.film` metafield plays on its product page. `scripts/setup-shopify.mjs` creates the
 metafields and the Dossier discount (see the handoff README).
@@ -44,8 +44,8 @@ sign-ups are not open yet.
 - `app/`: routes (`/`, `/range`, `/field-care`, `/products/[handle]`, `/about`, `/refill-programme`, `/cart`) and server actions in `app/actions.ts`.
 - `components/`: header, bag drawer, hero, Find your hour, product media and buy block.
 - `lib/catalog.ts`: all copy and imagery. `lib/shopify.ts`, `lib/offers.ts`, `lib/bag.ts`: Shopify and the bag.
-- `public/media/`: the v05 photography from the kit.
-- `public/film-files/` (served with Range support by `app/films/[name]/route.ts`): the kit's v05 films re-encoded for the web (H.264, fast start, silent) with macOS `avconvert -p Preset1920x1080`. They play on the home hero (desktop) and the four posting pages. Phones get the portrait still until a v05 mobile hero film exists. A `merowen.film` set in Shopify overrides a posting's film.
+- `public/media/`: the kit photography (v08 posting masters and boxes, v09 wearers band, v05 Range and Field Care).
+- `public/film-files/` (served with Range support by `app/films/[name]/route.ts`): the kit's v08e hero and v09 posting films re-encoded for the web (H.264, fast start) with macOS `avconvert -p Preset1920x1080`. They play muted on the home hero (desktop) and the four posting pages. Phones get the v08 still cropped onto the flacon until a mobile hero film exists. A `merowen.film` set in Shopify overrides a posting's film.
 - `app/globals.css`: every colour, type size and layout rule.
 
 ## Deploy

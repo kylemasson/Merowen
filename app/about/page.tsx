@@ -3,7 +3,7 @@ import { media } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Merowen is composed in Park City, Utah. Every bottle is a posting: one wild place, one hour, one material.",
+  description: "Merowen is composed in Park City, Utah. Every bottle is a posting: one place we stand, one hour, one material.",
 };
 
 const PACKAGING = [
@@ -20,9 +20,9 @@ const PACKAGING = [
 ];
 
 const PILLARS = [
-  { k: "Purpose", v: "Bring the world’s wild places to people who move through it with composure." },
-  { k: "Promise", v: "Each fragrance names one place, one hour and one hero material, and can be traced to them." },
-  { k: "Proof", v: "Natural-origin index on every label, named sourcing regions, batch-dated flacons, a lifetime refill." },
+  { k: "Purpose", v: "Two mountains, two streets: the places we stand, bottled for people who move through the world with composure." },
+  { k: "Promise", v: "Each fragrance names one place, one hour and one material. The mountain postings are made from their place; the city postings are composed for theirs. We say which." },
+  { k: "Proof", v: "Natural-origin index on every label, named material origins, batch-dated flacons, a lifetime refill." },
   { k: "Personality", v: "Discreet. Well-travelled. Exacting. Quietly wry." },
 ];
 
@@ -34,15 +34,15 @@ export default function AboutPage() {
           <div className="stack stack--28">
             <div className="eyebrow">The House</div>
             <h1 className="h1 h1--page">
-              From the sea. From the stone. <em>From the root.</em>
+              From the pass. From the river. <em>From the stone.</em>
             </h1>
             <p className="lede measure-sm">
-              Every Merowen bottle is a posting: one wild place, one hour of the day, one material carried home from
+              Every Merowen bottle is a posting: one place we stand, one hour of the day, one material carried home from
               it. Each is composed in Park City, Utah.
             </p>
           </div>
           <div className="frame frame--45">
-            <img src={media("merowen_master_mirbat_v05.jpg")} alt="Mirbat flacon with frankincense" decoding="async" />
+            <img src={media("merowen_master_blackfriars_v08.jpg")} alt="Blackfriars flacon with frankincense" decoding="async" />
           </div>
         </div>
       </section>
@@ -66,7 +66,7 @@ export default function AboutPage() {
       <section className="section" id="packaging" aria-labelledby="packaging-title">
         <div className="wrap split">
           <div className="frame frame--11">
-            <img src={media("merowen_box_mirbat_v05.jpg")} alt="The Mirbat flacon in its presentation box" loading="lazy" decoding="async" />
+            <img src={media("merowen_box_blackfriars_v08.jpg")} alt="The Blackfriars flacon in its presentation box" loading="lazy" decoding="async" />
           </div>
           <div className="stack stack--28">
             <div className="eyebrow">Packaging</div>

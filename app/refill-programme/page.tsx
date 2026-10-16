@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 };
 
 const STEPS = [
-  { n: "01", k: "Choose your posting", v: "Order the 200 ml Refill flask in Mirbat, Azrou, Torbeck or Kilda." },
-  { n: "02", k: "Refill the flacon", v: "[Refill method to confirm with production: funnel, transfer pump or in-store service]" },
-  { n: "03", k: "Return the empty", v: "Send the empty flask back with your next order. [Return label and any credit to confirm]" },
+  { n: "01", k: "Choose your posting", v: "Order the 200 ml Refill flask in Blackfriars, Guardsman, Mayfair or Empire." },
+  { n: "02", k: "Refill the flacon", v: "Unscrew the cap, fit the steel transfer nozzle that ships with the flask, and press. The flacon fills in under a minute." },
+  { n: "03", k: "Return the empty", v: "Send the empty flask back in its own box with the prepaid label. The flask is cleaned and refilled; you receive a credit toward your next order." },
 ];
 
 export default function RefillPage() {

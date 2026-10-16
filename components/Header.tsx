@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { useBag } from "./BagContext";
 import { Seal } from "./Seal";
 import { useDialog } from "./useDialog";
-import { CoordLine } from "./CoordLine";
-import { posting } from "@/lib/catalog";
+import { ParkCityTime } from "./ParkCityTime";
+import { HOUSE_COORDS } from "@/lib/catalog";
 
 const NAV = [
   { label: "The Postings", href: "/range" },
@@ -90,7 +90,6 @@ export function Header() {
 
 function Menu({ onClose }: { onClose: () => void }) {
   const ref = useDialog<HTMLDivElement>(true, onClose);
-  const kilda = posting("kilda")!;
   return (
     <div ref={ref} className="menu" role="dialog" aria-modal="true" aria-label="Menu">
       <div className="panel-head">
@@ -107,7 +106,15 @@ function Menu({ onClose }: { onClose: () => void }) {
         ))}
       </nav>
       <div className="menu__foot">
-        <CoordLine posting={kilda} />
+        <div className="coord">
+          <div className="coord__row">
+            <span>MEROWEN — PARK CITY</span>
+            <span>
+              {HOUSE_COORDS} — <ParkCityTime />
+            </span>
+          </div>
+          <div className="coord__rule" />
+        </div>
       </div>
     </div>
   );

@@ -490,6 +490,29 @@ em {
   background: var(--brass);
 }
 
+.coord__row span.coord__ash {
+  color: var(--ash);
+}
+
+.coord__row span.coord__bone {
+  color: var(--bone);
+}
+
+.coord--link {
+  color: var(--bone);
+}
+
+.coord--link.is-pending {
+  visibility: hidden;
+}
+
+.house-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 16px;
+}
+
 .coord--type {
   animation: type-in 600ms steps(24, end) 0.5s both;
 }
@@ -547,8 +570,8 @@ em {
 
 .lockup__word {
   font: 400 19px/1 var(--display);
-  letter-spacing: 0.42em;
-  margin-right: -0.42em;
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;
   color: var(--bone);
 }
 
@@ -985,9 +1008,8 @@ em {
 .hero {
   position: relative;
   margin-top: calc(var(--header-h) * -1);
-  height: 100svh;
-  min-height: 640px;
-  max-height: 1100px;
+  min-height: max(100svh, 640px);
+  display: flex;
   overflow: hidden;
   background: var(--obsidian);
 }
@@ -1046,7 +1068,8 @@ em {
 
 .hero__inner {
   position: relative;
-  height: 100%;
+  width: 100%;
+  min-height: max(100svh, 640px);
   max-width: var(--max-wide);
   margin: 0 auto;
   padding: 120px var(--gutter) clamp(32px, 7vh, 80px);
@@ -1087,9 +1110,10 @@ em {
 }
 
 @media (max-width: 759px) {
+  /* The v05 portrait still shows the old Mirbat label, so phones crop the v08 still onto the flacon. */
   .hero__media img,
   .hero__media video {
-    object-position: 50% 0%;
+    object-position: 74% 50%;
   }
   .hero__controls {
     top: 88px;
@@ -1324,6 +1348,12 @@ em {
 
 .rail__stop-label--short {
   display: none;
+}
+
+@media (min-width: 760px) and (max-width: 1279px) {
+  .rail__stop-label--long .rail__stop-name {
+    display: none;
+  }
 }
 
 @media (max-width: 759px) {
@@ -1832,7 +1862,7 @@ body.has-buybar .toast {
 
 .name-mark {
   font: 400 clamp(40px, 4.4vw, 56px)/1 var(--display);
-  letter-spacing: 0.42em;
+  letter-spacing: 0.3em;
 }
 
 .name-story {
@@ -1930,7 +1960,7 @@ body.has-buybar .toast {
 
 .footer__word {
   font: 400 20px/1 var(--display);
-  letter-spacing: 0.42em;
+  letter-spacing: 0.3em;
 }
 
 .footer__col {

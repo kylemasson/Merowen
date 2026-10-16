@@ -1,7 +1,10 @@
-// The Merowen catalogue as written in the v4 design handoff. It supplies all copy and imagery.
+// The Merowen catalogue as written in the v9 design handoff (Park City + London). It supplies all copy and imagery.
 // Shopify, when a token is set, supplies live prices, variant IDs and films (see lib/shopify.ts).
 
-export type PostingHandle = "mirbat" | "azrou" | "torbeck" | "kilda";
+export type PostingHandle = "blackfriars" | "guardsman" | "mayfair" | "empire";
+
+/** Mountain postings are made from their place ("From"); city postings are composed for theirs ("Composed for"). */
+export type PostingKind = "mountain" | "city";
 
 export type Posting = {
   handle: PostingHandle;
@@ -9,6 +12,11 @@ export type Posting = {
   name: string;
   hour: number;
   coords: string;
+  kind: PostingKind;
+  /** Guardsman Pass, Utah · Blackfriars, London … */
+  place: string;
+  /** Where the hero material comes from, stated separately from the place. */
+  origin: string;
   line: string;
   desc: string;
   material: string;
@@ -20,7 +28,9 @@ export type Posting = {
   source: string;
   producer: string;
   image: string;
-  /** Silent H.264 loop, web-encoded from the kit's v05 film. */
+  /** This posting's own presentation-box shot. Never show another posting's box. */
+  box: string;
+  /** Silent H.264 loop, web-encoded from the kit's v09 film. */
   film: string;
   extras: string[];
 };
@@ -59,7 +69,7 @@ export type CareItem = {
 export const media = (file: string) => `/media/${file}`;
 export const film = (file: string) => `/films/${file}`;
 
-export const HERO_FILM = film("merowen_hero_film_desktop_v05_web.mp4");
+export const HERO_FILM = film("merowen_hero_film_desktop_v08e_web.mp4");
 
 export const SIZES = [
   { label: "50 ml", price: 195 },
@@ -68,83 +78,99 @@ export const SIZES = [
 
 export const POSTINGS: Posting[] = [
   {
-    handle: "mirbat",
+    handle: "blackfriars",
     num: "01",
-    name: "Mirbat",
+    name: "Blackfriars",
     hour: 23,
-    coords: "17.0°N 54.7°E",
+    coords: "51.51°N 0.10°W",
+    kind: "city",
+    place: "Blackfriars, London",
+    origin: "Dhofar, Oman",
     line: "The night envoy.",
-    desc: "Frankincense smoke over warm stone after dark. Resinous, composed and slow to leave.",
-    material: "Omani frankincense · Dhofar, Oman",
+    desc: "Incense smoke over wet stone after dark, where the river meets the old city. Resinous, composed and slow to leave.",
+    material: "Frankincense, composed for Blackfriars",
     family: "Resinous Smoke",
-    top: "Pink pepper, elemi",
-    heart: "Omani frankincense, oud accord",
+    top: "Pink pepper, elemi, rain on stone",
+    heart: "Frankincense, oud accord",
     base: "Labdanum, birch tar, ambergris accord",
     liquid: "#5E4636",
-    source: "Boswellia sacra resin, hand-tapped in the Dhofar hills, Oman. Distilled in Salalah.",
-    producer: "[Co-operative / distiller TBC]",
-    image: media("merowen_master_mirbat_v05.jpg"),
-    film: film("merowen_film_mirbat_v05_web.mp4"),
+    source: "Boswellia sacra resin, hand-tapped and distilled in Dhofar. Composed for the hour the churches along the river fall quiet.",
+    producer: "Named on the batch card inside every box.",
+    image: media("merowen_master_blackfriars_v08.jpg"),
+    box: media("merowen_box_blackfriars_v08.jpg"),
+    film: film("merowen_film_blackfriars_v09_web.mp4"),
     extras: [],
   },
   {
-    handle: "azrou",
+    handle: "guardsman",
     num: "02",
-    name: "Azrou",
+    name: "Guardsman",
     hour: 6,
-    coords: "33.4°N 5.2°W",
+    coords: "40.61°N 111.55°W",
+    kind: "mountain",
+    place: "Guardsman Pass, Utah",
+    origin: "The Wasatch, Utah",
     line: "The early riser.",
-    desc: "Cold mountain air and sun-warmed cedar. Crisp, upright and awake before everyone else.",
-    material: "Atlas cedar · Middle Atlas, Morocco",
+    desc: "Cold air at the top of the pass and sun-warmed cedar. Crisp, upright and awake before everyone else.",
+    material: "Cedar and fir, from Guardsman Pass",
     family: "Woody Aromatic",
-    top: "Juniper berry, cypress",
-    heart: "Atlas cedar, clary sage",
+    top: "Juniper berry, cypress, cold air accord",
+    heart: "Cedar, fir balsam, clary sage",
     base: "Oakmoss, ambrette, white musk",
     liquid: "#6F6553",
-    source: "Cedrus atlantica heartwood from managed forest in the Middle Atlas, Morocco. Steam-distilled near Azrou.",
-    producer: "[Distiller TBC]",
-    image: media("merowen_master_azrou_v05.jpg"),
-    film: film("merowen_film_azrou_v05_web.mp4"),
+    source: "Rocky Mountain juniper and subalpine fir from the Wasatch, with Atlas cedar heartwood. Composed at 9,700 ft on Guardsman Pass.",
+    producer: "Named on the batch card inside every box.",
+    image: media("merowen_master_guardsman_v08.jpg"),
+    box: media("merowen_box_guardsman_v08.jpg"),
+    film: film("merowen_film_guardsman_v09_web.mp4"),
     extras: [],
   },
   {
-    handle: "torbeck",
+    handle: "mayfair",
     num: "03",
-    name: "Torbeck",
+    name: "Mayfair",
     hour: 17,
-    coords: "18.2°N 73.8°W",
+    coords: "51.51°N 0.15°W",
+    kind: "city",
+    place: "Mayfair, London",
+    origin: "Haiti; Virginia",
     line: "The quiet operator.",
-    desc: "Rooted, green and precise. Haitian vetiver sharpened with bergamot and settled into cured tobacco.",
-    material: "Haitian vetiver · Sud, Haiti",
+    desc: "Rooted, green and precise. Vetiver sharpened with bergamot and settled into cured tobacco and old leather.",
+    material: "Vetiver and tobacco, composed for Mayfair",
     family: "Green Earth",
     top: "Bergamot, grapefruit peel",
-    heart: "Haitian vetiver, black tea",
-    base: "Tobacco leaf, sandalwood",
+    heart: "Vetiver, black tea",
+    base: "Tobacco leaf, leather accord, sandalwood",
     liquid: "#46483F",
-    source: "Vetiveria zizanioides roots, 18-month harvest, Les Cayes plain, Sud, Haiti.",
-    producer: "[Grower co-operative TBC]",
-    image: media("merowen_master_torbeck_v05.jpg"),
-    film: film("merowen_film_torbeck_v05_web.mp4"),
+    source: "Vetiveria zizanioides roots, 18-month harvest, Haiti, with cured Virginia tobacco leaf. Composed for a Mayfair tailor's back room at five.",
+    producer: "Named on the batch card inside every box.",
+    image: media("merowen_master_mayfair_v08.jpg"),
+    box: media("merowen_box_mayfair_v08.jpg"),
+    film: film("merowen_film_mayfair_v09_web.mp4"),
     extras: [],
   },
   {
-    handle: "kilda",
+    handle: "empire",
     num: "04",
-    name: "Kilda",
+    name: "Empire",
     hour: 20,
-    coords: "57.8°N 8.6°W",
-    line: "The cliff walker.",
-    desc: "Atlantic wind across sea cliffs and wild heather. Bracing and mineral, with heather warmth underneath.",
-    material: "Seaweed absolute · Atlantic Scotland",
-    family: "Mineral Marine",
-    top: "Sea salt accord, seaweed absolute",
-    heart: "Heather, juniper, iris",
-    base: "Driftwood accord, ambrette, mineral musk",
+    coords: "40.60°N 111.52°W",
+    kind: "mountain",
+    place: "Empire Canyon, Utah",
+    origin: "The Wasatch, Utah",
+    line: "The last run.",
+    desc: "Juniper smoke over cold silver-mine stone at dusk. Bracing and mineral, with warmth underneath.",
+    material: "Juniper and smoke, from Empire Canyon",
+    family: "Mineral Smoke",
+    top: "Cold air accord, juniper berry",
+    heart: "Mountain sage, iris, wood smoke accord",
+    base: "Silver fir, ambrette, mineral musk",
     liquid: "#5A646A",
-    source: "Fucus vesiculosus seaweed absolute from the Atlantic coast of Scotland, plus wild heather.",
-    producer: "[Supplier TBC]",
-    image: media("merowen_master_kilda_v05.jpg"),
-    film: film("merowen_film_kilda_v05_web.mp4"),
+    source: "Juniper berry, mountain sage and silver fir from Empire Canyon, Park City, with a wood-smoke accord.",
+    producer: "Named on the batch card inside every box.",
+    image: media("merowen_master_empire_v08.jpg"),
+    box: media("merowen_box_empire_v08.jpg"),
+    film: film("merowen_film_empire_v09_web.mp4"),
     extras: [],
   },
 ];
@@ -161,8 +187,8 @@ export const RANGE: RangeItem[] = [
     desc: "All four postings sealed in a linen envelope with a blackened-steel seal. Its price is credited toward your first flacon.",
   },
   {
-    handle: "mirbat-extrait",
-    name: "Mirbat Extrait",
+    handle: "blackfriars-extrait",
+    name: "Blackfriars Extrait",
     role: "Wear",
     format: "30 ml, numbered",
     price: 340,
@@ -203,12 +229,12 @@ export const CARE: CareItem[] = [
     code: "FC/01",
     name: "Shave Cream",
     step: "Shave",
-    scent: "azrou",
+    scent: "guardsman",
     size: "150 ml",
-    keys: "Shea butter, glycerin, aloe vera, Atlas cedarwood oil",
+    keys: "Shea butter, glycerin, aloe vera, cedarwood oil, fir balsam",
     vessel: "Matte black aluminium tube, blackened-steel cap",
     line: "A close shave before first light.",
-    note: "Lathers thick from a little, lifts the hair and holds water on the skin, so the blade does less work. Atlas cedar in the steam.",
+    note: "Lathers thick from a little, lifts the hair and holds water on the skin, so the blade does less work. Cedar and fir in the steam.",
     price: 48,
     image: care("shavecream"),
   },
@@ -217,7 +243,7 @@ export const CARE: CareItem[] = [
     code: "FC/02",
     name: "Aftershave Balm",
     step: "Shave",
-    scent: "mirbat",
+    scent: "blackfriars",
     size: "75 ml",
     keys: "Frankincense oil, squalane, oat extract, panthenol",
     vessel: "Obsidian glass bottle, blackened-steel pump",
@@ -231,12 +257,12 @@ export const CARE: CareItem[] = [
     code: "FC/03",
     name: "Aftershave Tonic",
     step: "Shave",
-    scent: "kilda",
+    scent: "empire",
     size: "100 ml",
-    keys: "Witch hazel, sea fennel extract, allantoin, heather extract",
+    keys: "Witch hazel, juniper extract, allantoin, mountain sage",
     vessel: "Heavy clear glass flacon, blackened-steel screw cap",
-    line: "Cold water off the Atlantic.",
-    note: "Cold on the skin, then gone. Witch hazel and sea fennel settle the sting; heather and salt stay faintly behind.",
+    line: "Cold water off the pass.",
+    note: "Cold on the skin, then gone. Witch hazel and juniper settle the sting; sage and wood smoke stay faintly behind.",
     price: 58,
     image: care("tonic"),
   },
@@ -245,12 +271,12 @@ export const CARE: CareItem[] = [
     code: "FC/04",
     name: "Shampoo",
     step: "Hair",
-    scent: "kilda",
+    scent: "empire",
     size: "250 ml",
-    keys: "Kelp extract, coconut-derived cleansers, panthenol, rosemary oil",
+    keys: "Birch sap, coconut-derived cleansers, panthenol, rosemary oil",
     vessel: "Obsidian glass bottle, blackened-steel pump",
-    line: "Salt air, without the salt.",
-    note: "Washes without stripping. Kelp and rosemary leave hair with weight and the smell of the shore.",
+    line: "Mountain air, bottled.",
+    note: "Washes without stripping. Birch sap and rosemary leave hair with weight and the smell of cold air.",
     price: 44,
     image: care("shampoo"),
   },
@@ -259,9 +285,9 @@ export const CARE: CareItem[] = [
     code: "FC/05",
     name: "Conditioner",
     step: "Hair",
-    scent: "kilda",
+    scent: "empire",
     size: "250 ml",
-    keys: "Kelp extract, hydrolysed oat protein, shea butter, argan oil",
+    keys: "Fir needle extract, hydrolysed oat protein, shea butter, argan oil",
     vessel: "Obsidian glass bottle, blackened-steel pump",
     line: "Weight where it belongs.",
     note: "Oat protein and argan put back what the wind takes out. Hair that moves and doesn't need help in the morning.",
@@ -273,7 +299,7 @@ export const CARE: CareItem[] = [
     code: "FC/06",
     name: "Basalt Face Wash",
     step: "Skin",
-    scent: "azrou",
+    scent: "guardsman",
     size: "100 ml",
     keys: "Volcanic clay, activated charcoal, glycerin, cedarwood oil",
     vessel: "Matte black aluminium tube, blackened-steel cap",
@@ -287,7 +313,7 @@ export const CARE: CareItem[] = [
     code: "FC/07",
     name: "Daily Moisturiser",
     step: "Skin",
-    scent: "torbeck",
+    scent: "mayfair",
     size: "50 ml",
     keys: "Niacinamide, hyaluronic acid, squalane, vetiver oil",
     vessel: "Obsidian glass jar, blackened-steel lid",
@@ -301,7 +327,7 @@ export const CARE: CareItem[] = [
     code: "FC/08",
     name: "Night Oil",
     step: "Skin",
-    scent: "mirbat",
+    scent: "blackfriars",
     size: "30 ml",
     keys: "Frankincense oil, squalane, rosehip oil, vitamin E",
     vessel: "Obsidian glass dropper, blackened-steel collar",
@@ -315,7 +341,7 @@ export const CARE: CareItem[] = [
     code: "FC/09",
     name: "Deodorant",
     step: "Body",
-    scent: "torbeck",
+    scent: "mayfair",
     size: "75 g, refillable",
     keys: "Magnesium hydroxide, arrowroot powder, shea butter, vetiver oil",
     vessel: "Refillable blackened-steel twist case, paper-based refill tubes",
@@ -333,7 +359,7 @@ export const CARE: CareItem[] = [
     code: "FC/10",
     name: "Peptide Cream",
     step: "Skin",
-    scent: "kilda",
+    scent: "empire",
     size: "50 ml",
     keys: "Signal peptides, copper tripeptide, hydrolysed silk protein, ceramides, squalane",
     vessel: "Chamfered obsidian glass jar, blackened-steel lid",
@@ -376,6 +402,14 @@ export const FLACON_COPY =
 export const BOX_COPY =
   "Uncoated black FSC board, blind-debossed seal, coordinate line printed in bone ink, magnetic close. No foil, no plastic insert.";
 
-export const SHIPPING_COPY = "[Shipping and returns policy, pulled from Shopify]";
+export const SHIPPING_COPY =
+  "Complimentary shipping in the United States and United Kingdom. Unopened flacons may be returned within 30 days. Opened flacons may be returned within 14 days; we ask only that you tell us why.";
+
+export const INGREDIENTS_COPY =
+  "The full INCI list is printed on the carton and on the product page once each batch is released.";
+
+/** Park City, Utah: the house. Used by the hero eyebrow, footer and menu clocks. */
+export const HOUSE_COORDS = "40.65°N 111.50°W";
+export const kindTag = (p: Posting) => (p.kind === "city" ? "LONDON" : "PARK CITY");
 
 export const knownHandlesForSitemap = () => [...POSTINGS, ...RANGE, ...CARE].map((x) => x.handle);
