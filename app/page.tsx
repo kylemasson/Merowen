@@ -10,11 +10,11 @@ import { HERO_FILM, HOUSE_COORDS, RANGE, careItem, media } from "@/lib/catalog";
 const PROOFS = [
   { k: "Natural-origin index", v: "Calculated to ISO 16128 and printed on every label." },
   { k: "Named places", v: "Guardsman Pass. Empire Canyon. Blackfriars. Mayfair." },
-  { k: "Batch-dated flacons", v: "Batch and maceration date engraved on the steel collar." },
+  { k: "Batch-dated flacons", v: "Batch and maceration date on the card in every box." },
   { k: "A lifetime refill", v: "A 200 ml flask for every posting. Return the empty." },
 ];
 
-const CARE_TEASER = ["aftershave-balm", "shampoo", "basalt-face-wash", "deodorant"].map((h) => careItem(h)!);
+const CARE_TEASER = ["shave-cream", "aftershave-balm", "daily-moisturiser", "aftershave-tonic"].map((h) => careItem(h)!);
 
 export default function HomePage() {
   return (
@@ -80,7 +80,7 @@ export default function HomePage() {
               The full range
             </Link>
           </div>
-          <div className="cards">
+          <div className="cards cards--range">
             {RANGE.map((r) => (
               <RangeCard key={r.handle} item={r} tag="role" />
             ))}
@@ -115,8 +115,8 @@ export default function HomePage() {
             </div>
             <div className="stack stack--24 measure-sm">
               <p className="lede">
-                Ten everyday essentials for shave, hair, skin and body, each scented with one of the four postings so
-                it layers with the fragrance.
+                Everyday essentials for shave, hair, skin and body, each scented with one of the four postings so it
+                layers with the fragrance. Shave Cream, Aftershave Balm and Daily Moisturiser come first.
               </p>
               <Link href="/field-care" className="btn btn--ghost btn--start">
                 See Field Care
