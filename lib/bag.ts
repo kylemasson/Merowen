@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import { DOSSIER, POSTINGS, careItem, posting, rangeItem } from "./catalog";
+import { DOSSIER, POSTINGS, careItem, isPreparing, posting, rangeItem } from "./catalog";
 import type { Bag, BagLine } from "./bag-types";
 import { EMPTY_BAG } from "./bag-types";
 import { demoOptions } from "./offers";
@@ -35,7 +35,7 @@ function parseDemoId(id: string) {
   if (prefix !== "demo" || !handle) return null;
   const opts = demoOptions(handle);
   const option = opts?.options[Number(index)];
-  if (!option || rangeItem(handle)?.preparing) return null;
+  if (!option || isPreparing(handle)) return null;
   return { handle, option };
 }
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { REFILL, careItem, media, money } from "@/lib/catalog";
+import { REFILL, TRAVEL_SPRAY, money } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "The Refill Programme",
@@ -9,13 +9,11 @@ export const metadata: Metadata = {
 
 const STEPS = [
   { n: "01", k: "Choose your posting", v: "Order the 200 ml Refill flask in Blackfriars, Guardsman, Mayfair or Empire." },
-  { n: "02", k: "Refill the flacon", v: "Unscrew the cap, fit the steel transfer nozzle that ships with the flask, and press. The flacon fills in under a minute." },
+  { n: "02", k: "Refill the flacon", v: "Lift the cap, unscrew the pump, and pour through the steel funnel that ships with the flask. Screw the pump back on. It takes under a minute." },
   { n: "03", k: "Return the empty", v: "Send the empty flask back in its own box with the prepaid label. The flask is cleaned and refilled; you receive a credit toward your next order." },
 ];
 
 export default function RefillPage() {
-  const deo = careItem("deodorant")!;
-  const [deoCase, deoRefill] = deo.formats ?? [];
   return (
     <main>
       <section className="page page--hero">
@@ -52,21 +50,19 @@ export default function RefillPage() {
       </section>
 
       <section className="section">
-        <Link href={`/products/${deo.handle}`} className="wrap deo-link">
+        <Link href={`/products/${TRAVEL_SPRAY.handle}`} className="wrap deo-link">
           <div className="frame frame--45">
-            <img src={media("merowen_care_deodorant_v05.jpg")} alt="Deodorant in its blackened-steel case" loading="lazy" decoding="async" />
+            <img src={TRAVEL_SPRAY.image} alt="The Travel Spray in its gunmetal case" loading="lazy" decoding="async" />
           </div>
           <div className="stack measure-sm">
-            <div className="eyebrow">Field Care · {deo.code}</div>
+            <div className="eyebrow">The Travel Spray · {TRAVEL_SPRAY.format}</div>
             <div className="display h2--md">
               The case <em>refills too.</em>
             </div>
             <p className="copy">
-              The Deodorant lives in a refillable blackened-steel twist case. Refills come in paper-based tubes.
+              A satin gunmetal case around a 10 ml glass spray refill. When the refill runs out, swap it and keep the case.
             </p>
-            <div className="mono">
-              CASE {money(deoCase?.price ?? deo.price)} · REFILL {money(deoRefill?.price ?? 22)}
-            </div>
+            <div className="mono">{money(TRAVEL_SPRAY.price)}</div>
           </div>
         </Link>
       </section>

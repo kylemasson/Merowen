@@ -62,6 +62,7 @@ export function CareCard({ item, compact = false }: { item: CareItem; compact?: 
     <Link href={`/products/${item.handle}`} className="card card--care">
       <div className="frame frame--45">
         <img src={item.image} alt={item.name} loading="lazy" decoding="async" />
+        {item.preparing && <span className="badge">In preparation</span>}
       </div>
       <div className="card__body">
         <div className="card__meta">

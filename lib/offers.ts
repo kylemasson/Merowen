@@ -1,6 +1,6 @@
 import "server-only";
 
-import { POSTINGS, SIZES, careItem, hh, posting, rangeItem } from "./catalog";
+import { POSTINGS, SIZES, careItem, hh, isPreparing, posting, rangeItem } from "./catalog";
 import { getShopifyProduct, shopifyConfigured } from "./shopify";
 
 // What can be bought for a product handle: its options, each with a variant ID and price.
@@ -41,7 +41,7 @@ export function demoOptions(handle: string): { optionLabel: string | null; optio
   return null;
 }
 
-export const isPreparing = (handle: string) => Boolean(rangeItem(handle)?.preparing);
+export { isPreparing };
 
 export async function getOffer(handle: string): Promise<Offer | null> {
   const demo = demoOptions(handle);

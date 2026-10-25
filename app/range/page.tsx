@@ -5,10 +5,10 @@ import { POSTINGS, RANGE, careItem } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "The Range",
-  description: "The four Postings, the Dossier, the Extrait, the Field Kit and the Refill.",
+  description: "The four Postings, the Dossier, the Extrait, the Travel Spray, the Field Kit and the Refill.",
 };
 
-const TEASER = ["aftershave-balm", "shampoo", "basalt-face-wash"].map((h) => careItem(h)!);
+const TEASER = ["shave-cream", "aftershave-balm", "daily-moisturiser"].map((h) => careItem(h)!);
 
 export default function RangePage() {
   return (
@@ -26,7 +26,7 @@ export default function RangePage() {
             <h2 className="h3" id="range-postings">
               The Postings
             </h2>
-            <span className="mono mono--ash">EAU DE PARFUM · 50 / 100 ML</span>
+            <span className="mono mono--ash">EAU DE PARFUM · 50 / 100 ML · 10 ML TRAVEL</span>
           </div>
           <div className="cards">
             {POSTINGS.map((p) => (
@@ -41,7 +41,7 @@ export default function RangePage() {
               Discover. Wear. Carry. Keep.
             </h2>
           </div>
-          <div className="cards">
+          <div className="cards cards--range">
             {RANGE.map((r) => (
               <RangeCard key={r.handle} item={r} tag="format" />
             ))}

@@ -69,8 +69,8 @@ export default async function ProductPage({ params }: Props) {
       { k: "Source", v: p.source },
       { k: "Producer", v: p.producer },
       { k: "Composed", v: "In Park City, Utah. Perfumer named on the batch card." },
-      { k: "Bottled", v: "Bottled by hand in Park City, Utah" },
-      { k: "Concentration", v: "Eau de Parfum, 20% · 50 ml and 100 ml" },
+      { k: "Filled", v: "Macerated, chilled and filtered at a GMP fragrance filler in the United States" },
+      { k: "Concentration", v: `Eau de Parfum, ${p.strength} · 50 ml and 100 ml, and the 10 ml Travel Spray` },
     ];
     return (
       <main className="pdp">
@@ -145,7 +145,9 @@ export default async function ProductPage({ params }: Props) {
       ? "Joins the range once the core postings sell through."
       : r.handle === "the-dossier"
         ? "Arrives with a single-use code that credits the price toward your first flacon."
-        : "Return the empty flask with your next order.";
+        : r.handle === "the-travel-spray"
+          ? "When the refill runs out, order a new one and keep the case."
+          : "Return the empty flask with your next order.";
     return (
       <main className="pdp">
         <div className="wrap stack stack--pdp">
@@ -216,8 +218,8 @@ export default async function ProductPage({ params }: Props) {
               name={care.name}
               optionLabel={offer.optionLabel}
               options={offer.options}
-              preparing={false}
-              note={null}
+              preparing={Boolean(care.preparing)}
+              note={care.preparing ? "Joins Field Care after the first batch." : null}
               barSubs={offer.options.map((o) => `${care.code} · ${o.label}`.toUpperCase())}
             />
             <Specs

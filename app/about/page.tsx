@@ -9,13 +9,14 @@ export const metadata: Metadata = {
 const PACKAGING = [
   {
     k: "Flacon",
-    v: "Extra-clear flint glass with chamfered edges, the lower third in opaque matte black, on a solid base. Tall blackened-steel cap in satin gunmetal, knurled like a dive-watch crown, over a slim steel neck collar engraved with posting, hour, batch and date.",
+    v: "Extra-clear flint glass with chamfered edges, the lower third in opaque matte black, on a heavy solid base. Knurled gunmetal cap in satin zinc alloy, the M engraved on the dome, over a screw-on pump you can remove to refill.",
   },
   {
     k: "Outer box",
-    v: "Uncoated black FSC board, blind-debossed seal, coordinate line printed in bone ink, magnetic close. No foil, no plastic insert.",
+    v: "Rigid black FSC board, blind-debossed M, magnetic close, with a bone-printed band carrying the posting's coordinates and hour. No foil, no plastic insert.",
   },
-  { k: "Field Care", v: "Obsidian glass or black aluminium, blackened-steel caps and pumps, refillable steel deodorant case." },
+  { k: "Travel Spray", v: "Satin gunmetal case, the M engraved, around a swappable 10 ml glass spray refill." },
+  { k: "Field Care", v: "Black glass, black aluminium and black airless bottles, black caps and pumps." },
   { k: "Rule", v: "No gold or brass hardware, no paper labels, no foil." },
 ];
 

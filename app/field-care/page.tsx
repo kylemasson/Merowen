@@ -5,7 +5,7 @@ import { CARE, CARE_STEPS, media, type CareStep } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Field Care",
-  description: "Ten everyday essentials for shave, hair, skin and body, each scented with one of the four postings.",
+  description: "Everyday essentials for shave, hair, skin and body, each scented with one of the four postings.",
 };
 
 type Props = { searchParams: Promise<{ step?: string }> };
@@ -28,7 +28,8 @@ export default async function FieldCarePage({ searchParams }: Props) {
           </div>
           <p className="copy head-row__aside">
             Ten everyday essentials for shave, hair, skin and body, each scented with one of the four postings so it
-            layers with the fragrance.
+            layers with the fragrance. Shave Cream, Aftershave Balm and Daily Moisturiser arrive first; the rest are in
+            preparation.
           </p>
         </div>
 
